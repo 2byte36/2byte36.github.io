@@ -42,9 +42,9 @@ jobs:
 
       - name: Install theme dependencies
         run: |
-          cd hexo-theme-reimu
+          cd themes/reimu
           npm install
-          cd ..
+          cd ../..
 
       - name: Generate static files
         run: hexo generate
