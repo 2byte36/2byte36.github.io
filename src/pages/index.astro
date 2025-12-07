@@ -6,9 +6,10 @@ import Section from "@/components/Section.astro";
 import BlogPostCard from "@/components/BlogPostCard.astro";
 import Layout from "@/layouts/Layout.astro";
 import { KNOWN_TECH, ABOUT_ME } from "@/consts";
-const posts = (await getCollection("blog")).sort(
+const allPosts = (await getCollection("blog")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
+const recentPosts = allPosts.slice(0, 4);
 ---
 
 <Layout title="2byte's Blog">
@@ -19,7 +20,7 @@ const posts = (await getCollection("blog")).sort(
   >
     <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
       {
-        posts.map((post) => (
+        recentPosts.map((post) => (
           <BlogPostCard
             slug={post.id}
             title={post.data.title}
@@ -29,6 +30,15 @@ const posts = (await getCollection("blog")).sort(
           />
         ))
       }
+    </div>
+    
+    <div class="w-full flex justify-center mt-8">
+      <a 
+        href="/blog" 
+        class="px-6 py-3 rounded-lg text-white/60 hover:text-white transition-all duration-300 font-semibold tracking-wider"
+      >
+        More Posts →
+      </a>
     </div>
   </Section>
   <Section title="Technologies I Know" full_screen={false}>

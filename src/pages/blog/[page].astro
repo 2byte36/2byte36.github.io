@@ -1,0 +1,68 @@
+---
+import type { GetStaticPaths } from "astro";
+import { getCollection } from "astro:content";
+import BlogPostCard from "@/components/BlogPostCard.astro";
+import Section from "@/components/Section.astro";
+import Layout from "@/layouts/Layout.astro";
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const allPosts = (await getCollection("blog")).sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+  );
+  
+  return paginate(allPosts, { pageSize: 6 });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+---
+
+<Layout title="My Own Blog Posts">
+  <Section title="My Blog Posts">
+    <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+      {
+        page.data.map((post) => (
+          <BlogPostCard
+            slug={post.id}
+            title={post.data.title}
+            excerpt={post.data.description}
+            date={post.data.pubDate}
+            heroImage={post.data.heroImage}
+          />
+        ))
+      }
+    </div>
+    
+    <!-- Pagination -->
+    <div class="flex justify-center items-center gap-4 mt-12">
+      {page.url.prev ? (
+        <a 
+          href={page.url.prev}
+          class="px-4 py-2 rounded-lg text-white/60 hover:text-white transition-all duration-300 font-semibold"
+        >
+          ←
+        </a>
+      ) : (
+        <span class="px-4 py-2 rounded-lg text-white/30 font-semibold cursor-not-allowed">
+          ←
+        </span>
+      )}
+      
+      <span class="text-white/60 font-semibold">
+        Page {page.currentPage} of {page.lastPage}
+      </span>
+      
+      {page.url.next ? (
+        <a 
+          href={page.url.next}
+          class="px-4 py-2 rounded-lg text-white/60 hover:text-white transition-all duration-300 font-semibold"
+        >
+          →
+        </a>
+      ) : (
+        <span class="px-4 py-2 rounded-lg text-white/30 font-semibold cursor-not-allowed">
+          →
+        </span>
+      )}
+    </div>
+  </Section>
+</Layout>
