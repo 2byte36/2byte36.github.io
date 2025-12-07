@@ -4,13 +4,14 @@ type Props = {
   slug: string;
   excerpt: string;
   date: Date;
+  heroImage?: string;
 };
 
-const { title, slug, excerpt, date } = Astro.props;
+const { title, slug, excerpt, date, heroImage } = Astro.props;
 ---
 
 <div
-  class="w-full mx-auto bg-gradient-to-br relative pb-5 from-white/[0.001] to-white/[0.01] border-2 border-white rounded-lg overflow-hidden"
+  class="w-full mx-auto bg-gradient-to-br relative from-white/[0.001] to-white/[0.01] border-2 border-white rounded-lg overflow-hidden hover:border-white/70 transition-all duration-300"
 >
   <div class="flex items-center justify-start px-4 py-2 bg-white/95">
     <div class="flex space-x-2">
@@ -20,8 +21,18 @@ const { title, slug, excerpt, date } = Astro.props;
     </div>
   </div>
 
-  <div class="p-6 tracking-wider">
-    <a href={`/blog/${slug}`} class="block group">
+  <a href={`/blog/${slug}`} class="block group">
+    {heroImage && (
+      <div class="w-full bg-black overflow-hidden" style="aspect-ratio: 3349 / 1200;">
+        <img 
+          src={heroImage} 
+          alt={title}
+          class="w-full h-full object-contain object-center opacity-90 group-hover:opacity-100 transition-all duration-300"
+        />
+      </div>
+    )}
+    
+    <div class="p-6 tracking-wider">
       <h2 class="text-xl font-medium text-white mb-2">
         <span class="ba text-white/70 mr-2">❯</span>
         {title}
@@ -35,13 +46,13 @@ const { title, slug, excerpt, date } = Astro.props;
           })
         }]
       </p>
-      <p class="text-white/80 text-sm font-thin mb-4 line-clamp-1">{excerpt}</p>
+      <p class="text-white/80 text-sm font-thin mb-4 line-clamp-2">{excerpt}</p>
       <p
-        class="text-white absolute bottom-4 font-medium inline-flex items-center group-hover:underline-offset-4 underline-offset-8 underline transition-all ease-in-out"
+        class="text-white font-medium inline-flex items-center group-hover:underline-offset-4 underline-offset-8 underline transition-all ease-in-out mt-2"
       >
         Read more
         <svg
-          class="w-4 h-4 ml-2 transform group-hover:-translate-x-1 transition-transform"
+          class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -49,11 +60,11 @@ const { title, slug, excerpt, date } = Astro.props;
         >
           <path
             stroke-linecap="round"
-            stroke-jine-join="round"
+            stroke-linejoin="round"
             stroke-width={2}
             d="M9 5l7 7-7 7"></path>
         </svg>
       </p>
-    </a>
-  </div>
+    </div>
+  </a>
 </div>

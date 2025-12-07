@@ -1,7 +1,8 @@
 {
-  "name": "token-theme",
+  "name": "2byte-ctf-writeups",
   "type": "module",
-  "version": "0.0.1",
+  "version": "1.0.0",
+  "description": "CTF Writeups Archive - Blue Team focused on Forensics & Reverse Engineering",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",

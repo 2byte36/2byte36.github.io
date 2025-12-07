@@ -3,38 +3,128 @@ import type { CollectionEntry } from "astro:content";
 import FormattedDate from "@/components/Date.astro";
 import Layout from "@/layouts/Layout.astro";
 
-type Props = CollectionEntry<"blog">["data"];
+type Props = CollectionEntry<"blog">["data"] & {
+  headings: { depth: number; slug: string; text: string }[];
+};
 
-const { title, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
 ---
 
 <Layout>
-  <article class="pb-10 grid place-items-center grid-cols-1">
-    <div class="w-full grid place-items-center my-10 px-10 overflow-x-hidden">
+  <article class="pb-10 w-full">
+    <!-- Hero Image -->
+    <div class="w-full grid place-items-center my-10 px-4 md:px-10 overflow-x-hidden">
       {
         heroImage && (
-          <img src={heroImage} alt="hero-image" class="rounded-2xl" />
+          <div class="w-full max-w-6xl bg-black rounded-2xl overflow-hidden shadow-2xl" style="aspect-ratio: 3349 / 1200;">
+            <img 
+              src={heroImage} 
+              alt="hero-image" 
+              class="w-full h-full object-contain object-center" 
+            />
+          </div>
         )
       }
     </div>
-    <div
-      class="prose !max-w-[90vw] overflow-x-hidden !break-words brightness-110 prose-img:scale-90 prose-img:rounded-2xl prose-invert prose-hr:border-white prose-hr:bg-white px-4 md:px-0 md:max-w-4xl"
-    >
-      <div>
-        <div>
-          <FormattedDate date={pubDate} />
-          {
-            updatedDate && (
-              <div class="last-updated-on">
-                Last updated on <FormattedDate date={updatedDate} />
-              </div>
-            )
-          }
+
+    <!-- Main Content with TOC Sidebar -->
+    <div class="max-w-7xl mx-auto px-4 md:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-8 relative">
+        
+        <!-- Main Content Area -->
+        <div class="min-w-0">
+          <!-- Header -->
+          <div class="mb-8">
+            <div class="text-white/60 text-sm mb-2">
+              <FormattedDate date={pubDate} />
+              {
+                updatedDate && (
+                  <span class="ml-4">
+                    Updated: <FormattedDate date={updatedDate} />
+                  </span>
+                )
+              }
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">{title}</h1>
+            <hr class="border-white/20" />
+          </div>
+
+          <!-- Article Content -->
+          <div
+            class="prose prose-lg prose-invert prose-headings:text-white prose-headings:font-bold prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-4 prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-3 prose-p:text-white/80 prose-p:leading-relaxed prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline prose-strong:text-white prose-code:text-green-400 prose-code:bg-white/5 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-pre:bg-white/5 prose-pre:border prose-pre:border-white/10 prose-img:rounded-xl prose-img:shadow-lg prose-blockquote:border-l-4 prose-blockquote:border-white/20 prose-blockquote:text-white/70 prose-hr:border-white/10 max-w-none"
+          >
+            <slot />
+          </div>
         </div>
-        <h1>{title}</h1>
-        <hr />
+
+        <!-- Table of Contents Sidebar (Desktop Only) -->
+        <aside class="hidden lg:block">
+          <div class="sticky top-24">
+            <div class="border border-white/10 rounded-lg p-4 bg-white/5 backdrop-blur-sm">
+              <h3 class="text-white font-semibold text-sm mb-3 uppercase tracking-wider">On this page</h3>
+              <nav class="toc">
+                <ul class="space-y-2 text-sm">
+                  {headings.filter(h => h.depth <= 3).map((heading) => (
+                    <li 
+                      class={`
+                        ${heading.depth === 2 ? 'ml-0' : ''}
+                        ${heading.depth === 3 ? 'ml-4' : ''}
+                      `}
+                    >
+                      <a 
+                        href={`#${heading.slug}`}
+                        class="text-white/60 hover:text-white transition-colors duration-200 block py-1 hover:translate-x-1 transition-transform"
+                      >
+                        {heading.text}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </aside>
+
       </div>
-      <slot />
     </div>
   </article>
 </Layout>
+
+<style>
+  /* Smooth scroll */
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 100px;
+  }
+
+  /* Active TOC highlight */
+  .toc a.active {
+    @apply text-white font-semibold;
+  }
+</style>
+
+<script>
+  // TOC active state on scroll
+  document.addEventListener('DOMContentLoaded', () => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const id = entry.target.getAttribute('id');
+          const tocLink = document.querySelector(`.toc a[href="#${id}"]`);
+          
+          if (entry.isIntersecting && tocLink) {
+            document.querySelectorAll('.toc a').forEach((link) => {
+              link.classList.remove('active');
+            });
+            tocLink.classList.add('active');
+          }
+        });
+      },
+      { rootMargin: '-100px 0px -80% 0px' }
+    );
+
+    document.querySelectorAll('h2, h3').forEach((heading) => {
+      observer.observe(heading);
+    });
+  });
+</script>
