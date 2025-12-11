@@ -153,6 +153,7 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
                                 class={`mobile-toc-link hover:text-white transition-all duration-200 block py-1 flex-1 ${
                                   level === 0 ? 'text-white/60 text-sm' : 'text-white/50 text-xs'
                                 }`}
+                                style="word-break: break-word; overflow-wrap: break-word; hyphens: auto;"
                               >
                                 {node.heading.text}
                               </a>
@@ -243,6 +244,7 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
                               class={`hover:text-white transition-all duration-200 block py-1 flex-1 ${
                                 level === 0 ? 'text-white/60 text-sm' : 'text-white/50 text-xs'
                               }`}
+                              style="word-break: break-word; overflow-wrap: break-word; hyphens: auto;"
                             >
                               {node.heading.text}
                             </a>
@@ -289,6 +291,56 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
   
   .toc a.active span {
     @apply text-white;
+  }
+
+  /* Allow very long words (e.g., flags) to wrap without horizontal scroll */
+  .prose * {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  /* Force long tokens (e.g., flags) to wrap cleanly */
+  .prose {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  .prose p,
+  .prose li,
+  .prose strong,
+  .prose span,
+  .prose a {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    white-space: normal;
+    max-width: 100%;
+    display: block;
+  }
+
+  .prose code {
+    white-space: pre-wrap;
+    word-break: break-all;
+    overflow-wrap: anywhere;
+    max-width: 100%;
+    display: inline-block;
+  }
+
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4,
+  .prose h5,
+  .prose h6 {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  .prose pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    max-width: 100%;
   }
 
   /* Custom scrollbar for TOC */
