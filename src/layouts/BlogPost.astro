@@ -57,6 +57,125 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
           </div>
         </div>
 
+        <!-- Mobile TOC Button -->
+        <button 
+          id="mobile-toc-btn"
+          class="lg:hidden fixed bottom-6 right-6 z-50 bg-black/80 backdrop-blur-sm border border-white/20 hover:border-white/40 text-white/80 hover:text-white p-3 rounded-lg shadow-xl transition-all duration-200 flex items-center justify-center"
+          aria-label="Toggle Table of Contents"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path>
+          </svg>
+        </button>
+
+        <!-- Mobile TOC Modal -->
+        <div 
+          id="mobile-toc-modal"
+          class="lg:hidden fixed inset-0 z-40 hidden"
+        >
+          <!-- Overlay -->
+          <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" id="mobile-toc-overlay"></div>
+          
+          <!-- Modal Content -->
+          <div class="absolute right-4 top-28 bottom-4 w-full max-w-xs bg-black/95 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl transform transition-transform duration-300 translate-x-full" id="mobile-toc-content">
+            <div class="h-full flex flex-col">
+              <!-- Header -->
+              <div class="flex items-center justify-between px-6 py-4 border-b border-white/10">
+                <h3 class="text-white font-semibold text-base">Table of Contents</h3>
+                <button 
+                  id="mobile-toc-close"
+                  class="text-white/60 hover:text-white transition-colors p-1 -mr-1"
+                  aria-label="Close"
+                >
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+              </div>
+              
+              <!-- TOC Content for Mobile -->
+              <nav class="flex-1 overflow-y-auto px-6 py-5 scrollbar-thin">
+                <nav class="toc mobile-toc">
+                  <ul class="space-y-1 text-sm">
+                    {(() => {
+                      interface TocNode {
+                        heading: any;
+                        children: TocNode[];
+                      }
+                      
+                      const buildNestedToc = (headings: any[]): TocNode[] => {
+                        const stack: TocNode[] = [];
+                        const root: TocNode[] = [];
+                        
+                        headings.forEach(heading => {
+                          const node: TocNode = { heading, children: [] };
+                          
+                          while (stack.length > 0 && stack[stack.length - 1].heading.depth >= heading.depth) {
+                            stack.pop();
+                          }
+                          
+                          if (stack.length === 0) {
+                            root.push(node);
+                          } else {
+                            stack[stack.length - 1].children.push(node);
+                          }
+                          
+                          stack.push(node);
+                        });
+                        
+                        return root;
+                      };
+                      
+                      const tocTree = buildNestedToc(headings);
+                      let itemCounter = 1000;
+                      
+                      const renderNode = (node: TocNode, level = 0): any => {
+                        const hasChildren = node.children.length > 0;
+                        const itemId = `toc-item-mobile-${itemCounter++}`;
+                        
+                        return (
+                          <li class="mb-1">
+                            <div class="flex items-start gap-1">
+                              {hasChildren ? (
+                                <button 
+                                  class="toc-collapse-btn mt-1.5 text-white/40 hover:text-white transition-colors flex-shrink-0"
+                                  data-target={itemId}
+                                >
+                                  <svg class="w-3 h-3 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                  </svg>
+                                </button>
+                              ) : (
+                                <span class="w-4 flex-shrink-0"></span>
+                              )}
+                              <a 
+                                href={`#${node.heading.slug}`}
+                                class={`mobile-toc-link hover:text-white transition-all duration-200 block py-1 flex-1 ${
+                                  level === 0 ? 'text-white/60 text-sm' : 'text-white/50 text-xs'
+                                }`}
+                              >
+                                {node.heading.text}
+                              </a>
+                            </div>
+                            
+                            {hasChildren && (
+                              <ul id={itemId} class="toc-section ml-5 space-y-1 mt-1 overflow-hidden transition-all duration-200">
+                                {node.children.map(child => renderNode(child, level + 1))}
+                              </ul>
+                            )}
+                          </li>
+                        );
+                      };
+                      
+                      return tocTree.map(node => renderNode(node));
+                    })()}
+                  </ul>
+                </nav>
+              </nav>
+            </div>
+          </div>
+        </div>
+
         <!-- Table of Contents Sidebar (Desktop Only) -->
         <div class="hidden lg:block lg:w-64 lg:flex-shrink-0">
           <div id="toc-wrapper">
@@ -308,4 +427,71 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
   
   document.addEventListener('DOMContentLoaded', initTocActiveState);
   document.addEventListener('astro:page-load', initTocActiveState);
+
+  // Mobile TOC Toggle
+  function initMobileToc() {
+    const btn = document.getElementById('mobile-toc-btn');
+    const modal = document.getElementById('mobile-toc-modal');
+    const overlay = document.getElementById('mobile-toc-overlay');
+    const closeBtn = document.getElementById('mobile-toc-close');
+    const content = document.getElementById('mobile-toc-content');
+    const tocLinks = document.querySelectorAll('.mobile-toc-link');
+
+    if (!btn || !modal || !overlay || !closeBtn || !content) return;
+
+    function openToc() {
+      // Only work on mobile (screens smaller than 1024px)
+      if (window.innerWidth >= 1024) return;
+      
+      modal.classList.remove('hidden');
+      // Trigger reflow
+      modal.offsetHeight;
+      content.classList.remove('translate-x-full');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeToc() {
+      content.classList.add('translate-x-full');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+      }, 300);
+    }
+
+    function toggleToc() {
+      if (modal.classList.contains('hidden')) {
+        openToc();
+      } else {
+        closeToc();
+      }
+    }
+
+    btn.addEventListener('click', toggleToc);
+    closeBtn.addEventListener('click', closeToc);
+    overlay.addEventListener('click', closeToc);
+    
+    // Close TOC when clicking a link
+    tocLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        closeToc();
+      });
+    });
+
+    // Close on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+        closeToc();
+      }
+    });
+
+    // Close TOC when resizing to desktop
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 1024 && !modal.classList.contains('hidden')) {
+        closeToc();
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', initMobileToc);
+  document.addEventListener('astro:page-load', initMobileToc);
 </script>
