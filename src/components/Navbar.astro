@@ -27,12 +27,14 @@ import { SITE_TITLE, NAV_LINKS as links } from "@/consts";
           const subpath = pathname.match(/[^\/]+/g);
           const isActive =
             href === pathname || href === "/" + (subpath?.[0] || "");
+          const finalHref =
+            href.startsWith("/") || href.startsWith("//") ? href : `/${href}`;
           return (
             <>
               <a
                 class:list={[{ "bg-white text-black": isActive }]}
                 class="hover:bg-white hover:text-black transition-all ease-in-out px-2 max-w-fit"
-                href={`/${href}`}
+                href={finalHref}
               >
                 <div>{link.title}</div>
               </a>
