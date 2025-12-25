@@ -11,6 +11,10 @@ const { title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props;
 <html lang="en" class="overflow-x-hidden">
   <head>
     <BaseHead title={title} description={description} />
+    <!-- Added MathJax script -->
+    <script type="text/javascript" async
+      src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.min.js">
+    </script>
   </head>
 
   <body class="bg-black text-white tracking-wide overflow-x-hidden">
