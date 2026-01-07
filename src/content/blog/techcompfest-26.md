@@ -1,9 +1,13 @@
 ---
-title: "Techcompfest 2026 "
-description: ""
-pubDate: "2025-09-09"
-heroImage: "/images/teknocom/banner12.png"
+title: "Techcomfest 2026"
+description: "Write ups from the challenge that I solved alongside with collaboration of my team HiB in Qualifications of Techcomfest 2026"
+pubDate: "2025-12-27"
+heroImage: "/images/image.png"
 ---
+
+Write ups from the challenge that I solved alongside with collaboration of my team `HiB` in Qualifications of Techcomfest 2026. This is my team score when it ended :
+
+![alt text](image-6.png)
 
 ## Forensic
 ### pemanasan
