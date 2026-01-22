@@ -1,11 +1,11 @@
 ---
-title: "Techcomfest 2026"
+title: "Techcomfest 2026 Quals"
 description: "Write ups from the challenge that I solved alongside with collaboration of my team HiB in Qualifications of Techcomfest 2026"
 pubDate: "2025-12-27"
 heroImage: "/images/image.png"
 ---
 
-Write ups from the challenge that I solved alongside with collaboration of my team `HiB` in Qualifications of Techcomfest 2026. This is my team score when it ended :
+Write ups from the challenge that I solved alongside with collaboration of my team `HiB` in Qualifications of Techcomfest 2026. Qualifying to the final stage and this is my team score when it ended :
 
 ![alt text](image-6.png)
 
