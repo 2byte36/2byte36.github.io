@@ -5,7 +5,7 @@ pubDate: "Nov 16 2025"
 heroImage: "/images/sch/HeaderNPC.jpg"
 ---
 
-Write ups from the challenge that I solved alongside with collaboration of my team `HARO2b` in Finals of SCHEMATICS NPC CTF 2025 CTF. Sadly only get to solve 1 reverse chall and got the 4th place :
+Write ups from the challenge that I solved alongside with collaboration of my team `HARO2b` in Finals of SCHEMATICS NPC CTF 2025 CTF. Acquiring Top 5 leaderboard and this is my team score when it ended :
 
 ![](/images/sch/result.jpg)
 
