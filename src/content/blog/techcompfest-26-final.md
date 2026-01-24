@@ -14,20 +14,19 @@ Write ups from the challenge that I solved alongside with collaboration of my te
 #### Description
 I just made a simple chat app using Textual! I hope you like it!
 #### Solution
-Pada chall ini diberikan `app.py`, `requirements.txt`, dan folder `pyarmor_runtime_000000/` berisi runtime native `pyarmor_runtime.so`.
+We were given `app.py`, `requirements.txt`, and folder `pyarmor_runtime_000000/` containing `pyarmor_runtime.so`.
 
 ```python
 # Pyarmor 9.2.3 (trial), 000000, non-profits, 2026-01-19T23:47:46.582785
 from pyarmor_runtime_000000 import __pyarmor__
 __pyarmor__(__name__, __file__, b'PY000000\x00\x03\r\x00\xf3\r\r\n\x80\x00\x01\x00\x08\x00\x00\x00\x04\x00\x00\x00@\x00\x00\x00O<\x00\x00\x12\t\x04\x001\xa8\x7f\xfb\xfa\x8a~\xe0-\xdb\x06\xa0\xb8:\xc6\x9a\x00\x00\x00\x00\x00\x00\x00\x00\xda\xa9!i\xa8\x16\x06\xb84\xf2\x88;|\x99\x82\xff\x88\xb6L\xfc\xc2\x15\xb9^h\xb9S\xe0\xf6sMW\xfd}0\xb0\xf7#\r0\xfaW\xcb{\xfc\xcc?\xf7\x88\x130\x1bS\xd5\xbf"_z\x1f\x1d\xec\xea\xb4L\x93\x05\xa3\xf0oqao \x8c \r\'\x02\x14\xde\xb5\x03\x15)n\xdb\x82\xea\xc2\xb0\xfa\x00\xb6\xe4\xaf\xb4y\xbbK\x8b\xd2\x1c"\xc0\xcb\x1b\x84\x98( \xa4\xa6W\xa5L\x8a\xc00]$C\'R\xacnC\xdbLg\xa3\xaf\xd3\x1b\xea\xc7\xf2V{\xa9\xae\xcaF\x15\xf6\x1b\xdb\xd1\x19\xa4\t\x03\xc8=\x19\x04O\xa1\xady\rsA\x10\xe0\xe1\x9a\xe4\x87\xaa\xa3\x10\xa3\x19\x8a\xae\x81M\x0f"+\xeaH2\xafx\x9f\x8cs\xea\xdd\x0fZb@\x1f\xa4\xaf\xdd\xf5\x83\xb6V\xd6\xa6\xbd/`?\xd9\x14=\x06\x0e\x18\x94\xfbx\x03\xbd\x8b\xc0\xd5YT{\xbd\xe6\xdf\xdc\xbaXP\xde\xca\x8a\xa5%\x80\x8b89\x94\x02\xe0\xd2i:n\x82\xc9\x19\x8d\x83\xfd\x1f\xad\xac\x91\xefq,\xbeoD\xf8\xf3Z\x92\xf0\x08k\x94\xf8\x9b[X\xa3\xdcH\x94\\8\xb0\xe1\x84\x00\x0f\xca\x0fi\xe8\xa9\x12\x82\xf4q\xde\x16O\x89k\xa6\xb1\x90\x9a\x93Li-L\x89\xf3\xee\xd2f\xc1,c-\xa9J\xa4R\xac\xaa[truncated]
 ```
-Isi `app.py` sendiri bukan source program asli, tapi stub PyArmor yang memanggil `__pyarmor__(__name__, __file__, b'PY000000...')`. Artinya, logic aslinya ada di blob bytes itu dan dieksekusi/didekripsi oleh runtime PyArmor.
+The `app.py` is a PyArmor stub that calls `__pyarmor__(__name__, __file__, b'PY000000...')`. Meaning, the real logic is in that bytes blob and executed by PyArmor runtime.
 ![alt text](image-21.png)
-Approachnya adalah ambil info dari runtime dengan biarin PyArmor nge-load module obfuscated itu, lalu tangkap frame Python yang sudah kebuka di memori. Dari situ bisa dibaca metadata code object (kayak `co_names` dan `co_consts`) tanpa perlu decompile penuh. Dari hasil itu kebuka beberapa hal penting: ada `SERVER_HOST = "72.60.77.243"` dan `SERVER_PORT = 5555`, ada command `JOIN/HISTORY/CHAT/PIN`, dan bagian encrypt-nya pakai RSA OAEP dengan SHA256.
+Our approach is to take information from the runtime with letting PyArmor load the obfs modules, then captures Python frame that already open in the memory. From there, we found some interesting things: `SERVER_HOST = "72.60.77.243"` and `SERVER_PORT = 5555`, there is command `JOIN/HISTORY/CHAT/PIN`, and RSA OAEP with SHA256 encryption.
 ```python
 import sys
 from types import CodeType
-
 root = None
 
 def tracer(frame, event, arg):
@@ -50,11 +49,29 @@ finally:
 
 print("module co_names:")
 print(root.co_names)
-```
-Berikut script yang digunakan untuk leak metadata module yang sudah kebuka dari PyArmor. Intinya pasang tracer pakai `sys.settrace`, nunggu sampai frame modul yang didekripsi muncul (ditandai dengan `co_filename == '<frozen app>'`), lalu print `co_names` dan string-string di `co_consts`. Script ini nggak butuh TUI-nya jalan, cukup sampai import gagal karena `textual` hilang pun masih bisa carve metadata yang kebentuk.
-Dari output metadata ini, yang paling krusial adalah: host/port server, daftar command, dan fakta bahwa enkripsi pakai RSA OAEP dengan SHA256. Setelah itu, aku tinggal validasi behavior langsung ke service.
 
-Saat connect ke `72.60.77.243:5555`, server pertama kali ngirim sebuah public key RSA dalam format PEM (`-----BEGIN PUBLIC KEY----- ... -----END PUBLIC KEY-----`). Ini cocok sama petunjuk dari metadata, client memang nunggu PEM key, lalu nge-load key itu untuk encrypt command. Setelah PEM selesai, server ngirim pesan JSON `USERNAME`.
+# take string from co_consts
+def walk(code: CodeType, seen: set[int], out: set[str]):
+    if id(code) in seen:
+        return
+    seen.add(id(code))
+    for k in code.co_consts:
+        if isinstance(k, str):
+            out.add(k)
+        elif isinstance(k, CodeType):
+            walk(k, seen, out)
+
+strings = set()
+walk(root, set(), strings)
+print("interesting strings:")
+for s in sorted(strings):
+    print(repr(s))
+```
+The script above is the implementation to captures the python frame by setting tracer with `sys.settrace`, wait till decrypted frame module appears (marked by `co_filename == '<frozen app>'`), then print `co_names` and strings in `co_consts`. 
+![alt text](image-28.png)
+From the output, we can found: host/port server, command list, and RSA OAEP with SHA256 encryption. After that, we can validate the behavior to the service.
+
+When connected to `72.60.77.243:5555`, server responded with RSA public key (`-----BEGIN PUBLIC KEY----- ... -----END PUBLIC KEY-----`). This validate our findings before, client wait PEM key, then load that key to encrypt command, after that, server sends JSON `USERNAME`.
 
 ```python
 #!/usr/bin/env python3
@@ -120,19 +137,21 @@ def main():
 if __name__ == "__main__":
     main()
 ```
-
-Di sisi client, command yang dikirim bukan plaintext JSON, tapi harus diencrypt dulu pakai public key yang barusan dikirim server. Skemanya: client membungkus command ke JSON dengan bentuk `{"cmd": "...", "payload": ...}`, lalu encrypt pakai RSA OAEP (MGF1) dengan hash SHA256, dan mengirim ciphertext mentah ke socket. Sementara itu server mengirim balik response sebagai JSON plaintext per baris (newline-delimited), misalnya `JOIN_OK`, `HISTORY`, `PIN_FAIL`, `PIN_OK`, `FLAG`, dan `ERROR`.
+Script above, were used to encrypt command with RSA OAEP (MGF1) -> hash SHA256 and send it to the server, because the server doesn't accepts a JSON plaintext. Then server responds with a JSON plaintext.
 ![alt text](image-22.png)
-Dari testing interaksi, terlihat kalau:
-Pertama, `JOIN` ke room umum berhasil.
-Kedua, `CHAT` di room umum akan dibroadcast dan di-ack dengan `CHAT_OK`.
-Ketiga, `JOIN` ke “Flag” room juga bisa, tapi `CHAT` di Flag room ditolak (`ERROR: Cannot chat in Flag Room`) dan `HISTORY` kosong.
-Keempat, satu-satunya jalan dapat flag adalah lewat command `PIN` dengan PIN 6 digit sampai dapat event `PIN_OK`, lalu server mengirim event `FLAG`.
+From our interactions, seems that:
+1. `JOIN` to general room success.
+2. `CHAT` in general room will be brodcasted and ack-ed with `CHAT_OK`.
+3. `JOIN` to "Flag" room is success, but `CHAT` is declined (`ERROR: Cannot chat in Flag Room`) and `HISTORY` empty.
+4. The only way is command `PIN` with 6 digits PIN till `PIN_OK`, and server responds with `FLAG`.
 ![alt text](image-27.png)
-Karena tidak ada hint PIN yang muncul dari file lokal (stub PyArmor) maupun dari history room, jalan praktisnya adalah brute force seluruh ruang PIN 000000–999999. Solvernya Membuat ambil PEM public key, setup RSA-OAEP(SHA256). Mengirim banyak percobaan PIN dalam batch (misalnya 500 PIN per `sendall`) supaya overhead round-trip dan syscall lebih kecil. Memparalelkan brute force pakai `multiprocessing`, jadi beberapa proses meng-cover range PIN yang berbeda-beda.
-Menambahkan mekanisme reconnect, karena server kadang memutus koneksi di tengah brute force (contohnya `BrokenPipeError`), jadi worker perlu connect ulang dan lanjut.
+Because there is no hint about the PIN given, our approach is to brute force with 6 digits constraint. We implement it to the solver below that can: 
+1. Take PEM public key. 
+2. Setup RSA-OAEP(SHA256). 
+3. Sending a lot of PIN in batch (500 PIN per `sendall`) so the overhead round-trip and syscall much smaller.
+4. Brute force using `multiprocessing`, so every process cover different PIN range.
+5. Reconnect handler, because server sometimes disconnect in the middle of bruteforcing.
 
-Solver finalnya ada di file berikut.
 ```python
 import json
 import multiprocessing as mp
