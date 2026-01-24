@@ -1,7 +1,7 @@
 ---
-title: "Techcomfest 2026 Quals"
+title: "Techcomfest 2026 Final"
 description: "Write ups from the challenge that I solved alongside with collaboration of my team HiB in Final of Techcomfest 2026"
-pubDate: "2025-12-27"
+pubDate: "2026-01-20"
 heroImage: "/images/image.png"
 ---
 
