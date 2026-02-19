@@ -1,52 +1,21 @@
-# 2byte's CTF Writeups Archive
+### This readme is for my ctf cheatshits
 
-[![Built with Astro](https://astro.badg.es/v2/built-with-astro/tiny.svg)](https://astro.build)
+## Dfir
 
-Welcome to my CTF writeups archive! This blog documents my journey through various Capture The Flag competitions, with a focus on:
-
-- 🔍 **Forensics** - Memory forensics, disk forensics, network analysis
-- 🔧 **Reverse Engineering** - Binary analysis, malware analysis
-- 🕵️ **Steganography** - Hidden data extraction techniques
-- 🌐 **Web Exploitation** - Application security challenges
-- 🛡️ **Blue Team** - Defensive security techniques
-
-## About Me
-
-I'm a CTF player specializing in Forensics and Reverse Engineering challenges. This blog aims to provide comprehensive solutions and learning resources for the cybersecurity community.
-
-## Technology Stack
-
-This site is built with:
-- [Astro](https://astro.build) - Static site generator
-- [Tailwind CSS](https://tailwindcss.com) - Styling
-- [MDX](https://mdxjs.com) - Enhanced markdown for blog posts
-
-## Local Development
-
-```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
+# chall refs : Bad OPSEC CJ25
+Artifacts : Kaspersky.DMP (Mini DuMP crash report)
+Used tools : Windbg & bulk_extractor
+1. Identify OS + version + computer name
+pake `windbg`, 
+`!analyze -v` = os + version 
+`!peb` = computer name
+2. Identify path of the crashed program
+`!peb` = ImageFile (the path)
+3. Mutex name hunt
+- cari start dan end address module program `lm m <program name>` e.g `lm m Kaspersky`
+```txt 
+start             end                 module name
+00000001`40000000 00000001`40050000   Kaspersky   (no symbols)
 ```
-
-## Featured Writeups
-
-- **NCLP CTF Season 1** - Comprehensive forensics challenges
-- **Schematics NPC CTF 2025** - Web exploitation and reverse engineering
-
-## Connect
-
-- GitHub: [@2byte36](https://github.com/2byte36)
-- Website: [2byte36.github.io](https://2byte36.github.io)
-
----
-
-*Blue Team | CTF Player - Forensics & Reverse Engineering*
+- mutex hunt `s -a <start_addr> <end_addr> "Global\\"` e.g `s -a 0000000140000000 0000000140050000 "Global\\"`
+4. i still dont know how to dump the exe file in DMP, so i leave it to the LLM
