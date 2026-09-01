@@ -1,13 +1,16 @@
 ---
+import { getBlogImageSrc, type BlogImage } from "@/utils/blog";
+
 type Props = {
   title: string;
   slug: string;
   excerpt: string;
   date: Date;
-  heroImage?: string;
+  heroImage?: BlogImage;
 };
 
 const { title, slug, excerpt, date, heroImage } = Astro.props;
+const heroImageSrc = getBlogImageSrc(heroImage);
 ---
 
 <div
@@ -22,16 +25,16 @@ const { title, slug, excerpt, date, heroImage } = Astro.props;
   </div>
 
   <a href={`/blog/${slug}`} class="block group">
-    {heroImage && (
+    {heroImageSrc && (
       <div class="w-full bg-black overflow-hidden" style="aspect-ratio: 3349 / 1200;">
-        <img 
-          src={heroImage} 
+        <img
+          src={heroImageSrc}
           alt={title}
           class="w-full h-full object-contain object-center opacity-90 group-hover:opacity-100 transition-all duration-300"
         />
       </div>
     )}
-    
+
     <div class="p-6 tracking-wider">
       <h2 class="text-xl font-medium text-white mb-2">
         <span class="ba text-white/70 mr-2">❯</span>

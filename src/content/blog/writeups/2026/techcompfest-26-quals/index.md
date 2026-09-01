@@ -2,40 +2,40 @@
 title: "Techcomfest 2026 Quals"
 description: "Write ups from the challenge that I solved alongside with collaboration of my team HiB in Qualifications of Techcomfest 2026"
 pubDate: "2025-12-27"
-heroImage: "/images/image.png"
+heroImage: "./assets/hero.png"
 ---
 
 Write ups from the challenge that I solved alongside with collaboration of my team `HiB` in Qualifications of Techcomfest 2026. Qualifying to the final stage and this is my team score when it ended :
 
-![alt text](image-6.png)
+![alt text](./assets/image-6.png)
 
 ## Forensic
 ### pemanasan
 #### Description
 "Cisco Packet Tracer adalah perangkat lunak simulasi jaringan gratis dari Cisco Systems yang memungkinkan pengguna membuat, mengonfigurasi, dan menguji topologi jaringan virtual secara interaktif, berguna untuk belajar konsep jaringan, persiapan sertifikasi (seperti CCNA), serta simulasi skenario jaringan kompleks tanpa perlu perangkat keras fisik yang mahal. Alat ini menyediakan visualisasi pergerakan data dan antarmuka drag-and-drop untuk membangun jaringan dengan router, switch, PC, server, dan perangkat lain, menjadikannya media pembelajaran praktis yang populer di kalangan pelajar dan profesional IT."
 #### Solution
-![alt text](image-3.png)
+![alt text](./assets/image-3.png)
 Given an zip file after we extracted it, there is a pkz file which is same as zip archive. So we extracted it again.
-![alt text](image-4.png)
+![alt text](./assets/image-4.png)
 The output is `file` and `LAB 6 - EtherChannel.pkt`. The LAB 6 file is a Cisco Packet Tracer file and the `file` is detected by file command as jpeg.
-![alt text](image-5.png)
+![alt text](./assets/image-5.png)
 Checked it out with xxd, it turned out `file` had a PNG like header, but missing the file signature.
-![alt text](file.png)
+![alt text](./assets/file.png)
 So we fixed it, by adding PNG signature and the result is a QR Code. Scanned it and we got the flag.
 #### Flag
 TCF{75444f2ce78cda7dcc9d9af2cc935ae00fd3ed410a781832000e0ba4a3783948}
 
 ### mosquito
 #### Description
-![alt text](image-8.png)
+![alt text](./assets/image-8.png)
 #### Solution
-![alt text](image-9.png)
+![alt text](./assets/image-9.png)
 Given a pcap file that capture mostly tcp traffics. First recon I inspect the protocol hierarchy and there is `mqtt protocol`, a protocol that commonly `used in IoT device`.
-![alt text](image-10.png)
+![alt text](./assets/image-10.png)
 I inspect one of TCP stream at the MQTT packets and I got some `broker creds` (username and password) and some `broker data payload`.
-![alt text](image-11.png)
+![alt text](./assets/image-11.png)
 The data payload is served a topic `factory/line3/ctrl` that carries a hex string.
-![alt text](image-12.png)
+![alt text](./assets/image-12.png)
 From TCP stream also found a `ELF binary` that writtens in GO. I extract this, and ask GPT to anlyze it. The binary turns out is an `AES-CBC encryptor` with PKCS#7 padding and key from the broker creds. `Key` was taken from first `16 byte of SHA256(username)` and `IV` was taken from first `16 byte of SHA256(f"{password}:{ts}")` with ts is the timestamp that was been used in the program (1761148328). For the decryption the ciphertext I assumed was the data payload of the broker topic, so we can make the decryptor like this:
 ```py
 import hashlib
@@ -91,7 +91,7 @@ TCF{00efcad114_kata_masfir_bosen_ransomware_00efdd8bcd}
 #### Description
 my image is full of logic, my wife is full of love but its kinda broken, help me
 #### Solution
-![alt text](image-13.png)
+![alt text](./assets/image-13.png)
 Given a .ad1 file, so without hestation I loaded it to the FTK Imager. It turned out that the `image is broken`.
 ```py
 import argparse
@@ -229,9 +229,9 @@ if __name__ == "__main__":
     main()
 ```
 Because the image was broken, I made a script that can `parse the AD1 file structure` with `dissect.evidence` library. From the parsing, I found out that there is only a pdf file in the image.
-![alt text](image-14.png)
+![alt text](./assets/image-14.png)
 GPT said, that file `saved as several compressed chunks`, `every chunk` needs to deflated as `raw deflate` and there is `2 byte prefix` at the `start` of the chunk that should be `skipped before decompressing`. All of the `decompressed chunk got combined`, then `cutted` according to the actual file size.
-![alt text](image-15.png)
+![alt text](./assets/image-15.png)
 After the pdf got extracted, we got the flag.
 #### Flag
 TCF{fix_the_disk_please?_00efbcdd8b}
@@ -241,21 +241,21 @@ TCF{fix_the_disk_please?_00efbcdd8b}
 #### Description
 This was an easy challenge isn't?, you don't even need the source code to solve it. Here's the binary instead. Good luck! but it doesnt matter anyway because it is 10/10 same.
 #### Solution
-![alt text](image-16.png)
+![alt text](./assets/image-16.png)
 The first step I took was to ensure the service was actually accessible using HTTP/3. Initially, I tried using the regular http scheme, but that failed to connect. After `forcing HTTPS` and ensuring there were no fallback protocols with `--http3-only`, the QUIC/HTTP/3 `connection` was `successful`.
-![alt text](image-17.png)
+![alt text](./assets/image-17.png)
 From there, the `/ endpoint` responding with an HTTP/3 `200` response, but the `body is empty`. Interestingly, when I access `/index.html`, the server returns the HTML `"Welcome to the Root Directory."` This maybe suggests a path traversal vulnerability.
-![alt text](image-18.png)
-![alt text](image-19.png)
-![alt text](image-20.png)
+![alt text](./assets/image-18.png)
+![alt text](./assets/image-19.png)
+![alt text](./assets/image-20.png)
 Since the binary was provided, I `created a local reproduction` to see what the server was actually doing. The binary I received was called http30day_server and had options like --dir, --cert, --key, and --listen. I ran the local server with a custom root directory and intentionally placed one file outside the root to test if there was a way to read absolute files.
-![alt text](image-26.png)
-Interestingly, traversing `../` resulted of `no effects`, but a request with a path prefixed with a `double slash (https://URL//[path_traversal])` actually caused `path traversal` and open an absolute path in the filesystem`.
-![alt text](image-23.png)
+![alt text](./assets/image-26.png)
+Interestingly, traversing `../` resulted of `no effects`, but a request with a path prefixed with a `double slash (https://URL//[path_traversal])` actually caused `path traversal` and open an absolute path in the filesystem.
+![alt text](./assets/image-23.png)
 The next exploit is reading the /etc/passwd file in the remote server to make sure the exploit is succeed there.
-![alt text](image-24.png)
+![alt text](./assets/image-24.png)
 Since this was a `container`, I utilized `/proc`. From `/proc/self/mounts`, I could see the `mount points` and identify the `files added to the container`. Here, there was one mount that was sus: `/how_you_did_get_h3r3_br00h.txt`.
-![alt text](image-25.png)
+![alt text](./assets/image-25.png)
 And the file immediately contains the flag.
 #### Flag
 TCF{1ts_just_b4ddD0cs_ex4mpl3_F0r_http3}

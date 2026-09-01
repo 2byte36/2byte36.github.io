@@ -2,12 +2,12 @@
 title: "Teknocomp 2025"
 description: "Complete write-ups of challenges solved in Teknocomp 2025 CTF held by Teknokrat University."
 pubDate: "2025-09-09"
-heroImage: "/images/teknocom/banner12.png"
+heroImage: "./assets/banner12.png"
 ---
 
 Complete write-ups of challenges solved in Teknocomp 2025 CTF held by Teknokrat University. I finished 2nd on the leaderboard, and here is my final score:
 
-![](/images/teknocom/skobod.jpeg)
+![](./assets/skobod.jpeg)
 
 ## Web
 ### Betting
@@ -17,10 +17,10 @@ Don’t worry, bro, no one can hack this!
 http://38.47.176.164:4112/
 
 #### Solution
-![](/images/teknocom/betting/1.png)
+![](./assets/betting/1.png)
 The website simulates a slot machine. Upon inspecting the URL, I noticed a `?slot` parameter that represents the slot number after spinning. By modifying this parameter to display all 5s, I was able to retrieve the flag.
-![](/images/teknocom/betting/2.png)
-![](/images/teknocom/betting/3.png)
+![](./assets/betting/2.png)
+![](./assets/betting/3.png)
 
 #### Flag
 Tekncom{G4mbl1ng_L0se_M0n3y_4ll_Day_L0l}
@@ -32,13 +32,13 @@ The government recently imposed strict music royalty rules, but honestly, they d
 http://38.47.176.164:4111/
 
 #### Solution
-![](/images/teknocom/anti_royalti/1.png)
+![](./assets/anti_royalti/1.png)
 I tested the website's input handling by injecting a Server-Side Template Injection (SSTI) payload `{{7*7}}`. The payload executed successfully, confirming the vulnerability. I then escalated the attack to execute remote code using the payload:
 
 `{{ self.__init__.__globals__.__builtins__.__import__('os').popen('id').read() }}`
 
-![](/images/teknocom/anti_royalti/2.png)
-![](/images/teknocom/anti_royalti/3.png)
+![](./assets/anti_royalti/2.png)
+![](./assets/anti_royalti/3.png)
 
 #### Flag
 Teknocom{L1st3n1ng_t0_Mus1c_1s_Fr33_Dud3_G0v_D03s_N0th1ng_4nym0r3}
@@ -49,9 +49,9 @@ Teknocom{L1st3n1ng_t0_Mus1c_1s_Fr33_Dud3_G0v_D03s_N0th1ng_4nym0r3}
 "Something valuable is hidden. Will you discover it?"
 
 #### Solution
-![](/images/teknocom/phake/1.png)
+![](./assets/phake/1.png)
 Analyzing the provided pcap file revealed HTTP packets. By inspecting the HTTP stream, I found the flag in packet 90.
-![](/images/teknocom/phake/2.png)
+![](./assets/phake/2.png)
 
 #### Flag
 Teknocom{y0u_4ctu4lly_f0und_1t_lol}
@@ -60,9 +60,9 @@ Teknocom{y0u_4ctu4lly_f0und_1t_lol}
 #### Description
 Wielino has left his mark among thousands of sarcastic messages. Only the patient and observant will uncover his secret
 #### Solution
-![](/images/teknocom/vault/1.png)
+![](./assets/vault/1.png)
 Using basic steganographic analysis tools (exif, strings, binwalk, etc.), I discovered a gzip file embedded in the image. Extracting the gzip file revealed a binary folder. By running `grep -R "Teknocom" bin`, I located the flag.
-![](/images/teknocom/vault/2.png)
+![](./assets/vault/2.png)
 
 #### Flag
 Teknocom{b1nw4lk_3xtr4ct3d_1t_lol}
@@ -193,7 +193,7 @@ Teknocom{rly_you_thought_this_was_easy}
 #### Description
 This program asks you to enter the flag. Beware there are multiple fake flags that might trick you. The correct flag is carefully split into several parts inside the binary, and only by combining them correctly will you get the real flag.
 #### Solution
-![](/images/teknocom/reversify/1.png)
+![](./assets/reversify/1.png)
 First step is by scanning all of ASCII string using izz. There will be a some of flag, and the right one is the flag that has been splitted. With some easy logic I can reconstructed the actual flag.
 #### Flag
 Teknocom{kn0w_th3_bin4ry_fi1e_with_s0m3_str1ng}
@@ -202,7 +202,7 @@ Teknocom{kn0w_th3_bin4ry_fi1e_with_s0m3_str1ng}
 #### Description
 This program seems simple: enter the correct password, and you get the flag. But beware, it uses constructor functions that check the password before main() runs. The correct password is 24 characters long and checked in small parts. One wrong character, and the program exits immediately.
 #### Solution
-![](/images/teknocom/ba1ted/1.png)
+![](./assets/ba1ted/1.png)
 Opening the binary in Ghidra shows several functions marked with `__attribute__((constructor))` (or located in the .init_array section). Each one performs a small check: it takes `2 bytes` from `argv[1]`, calls `strncmp(actual, expected, 2)`, and then calls `exit(1)` if the comparison fails. These checks are chained in sequence until all 24 characters have been verified. The program relies on standard functions like `strncmp` to validate the input `before main()` runs, but it doesn’t account for linker interposition. On Linux ELF binaries that are dynamically linked, we can load our own shared library before libc using LD_PRELOAD, causing the program’s `strncmp calls` to resolve to our implementation instead of the real one.
 
 Inside that hook, we can log the parameters being compared, especially the second argument (s2), which is the expected (correct) 2-byte chunk of the password. In other words, we don’t need to brute-force the password: the program effectively "leaks" it piece by piece every time it calls `strncmp`. The first approach is to hook strncmp via `LD_PRELOAD` using the following code:
@@ -230,8 +230,8 @@ int strncmp(const char* s1, const char* s2, size_t n){
     return res;
 }
 ```
-![](/images/teknocom/ba1ted/2.png)
-Next, we extract the password chunks step by step. The password is 24 characters long and is validated two characters at a time. The trick is to run the program using the correct prefix we’ve already recovered, plus some padding (for example, `A`) so the constructors keep progressing to the next check. On each run, we read the hook’s `stderr` output to see the `s2` value. 
+![](./assets/ba1ted/2.png)
+Next, we extract the password chunks step by step. The password is 24 characters long and is validated two characters at a time. The trick is to run the program using the correct prefix we’ve already recovered, plus some padding (for example, `A`) so the constructors keep progressing to the next check. On each run, we read the hook’s `stderr` output to see the `s2` value.
 Start from scratch:
 `LD_PRELOAD=./hook.so ./main AAAAAAAAAAAAAAAAAAAAAAAA`
 The hook will print something like:
@@ -246,7 +246,7 @@ Teknocom{c0ngr4ts_but_n0t_r34llyy}
 #### Description
 Seems like someone thought neural networks make things secure. Prove them wrong.
 #### Solution
-![alt text](<Screenshot 2025-09-09 024226.png>)
+![alt text](<./assets/Screenshot 2025-09-09 024226.png>)
 Opening the `.npz` file reveals five entries: `W1, b1, W2, b2, and y`. All of them are `float64`. Their shapes are:
 - W1: (57, 57), b1: (57,)
 - W2: (57, 57), b2: (57,)
@@ -324,7 +324,7 @@ Teknocom{L00k_M0m_1_Tr41n3d_A_N3ural_N3tw0rk_F0r_4_Fl4g}
 #### Description
 Someone thought 64 bytes of confusion would keep the secret safe… good luck reversing their ‘brilliant’ ARX stream cipher
 #### Solution
-![](/images/teknocom/arx/1.png)
+![](./assets/arx/1.png)
 The challenge provides an implementation of a simple keystream generator called `baby_arx`. The initial `key is 64 bytes` long and is filled with the FLAG, truncated or `padded` to exactly `64 bytes`. If the FLAG is shorter than 64 bytes, it is padded with the character '0' (0x30).
 At each step, the generator only looks at the first two bytes of the internal state, `state[0]` and `state[1]`. It produces one output byte b, then shifts the state. More precisely, the generator defines:
 - f1(b) = b ^ ((b << 1) | (b & 1)) (mod 256)
@@ -434,7 +434,7 @@ Teknocom{B4byARX_St34m_C1ph3r_K33ps_T3kn0c0m_Fl4g_X9Q2}
 King Caesar has hidden a secret message in plain sight. Each word of his message has been shifted using a repeating pattern of 3, 5, 2, 4, 1. Observe the pattern carefully and see what mysteries the king left behind.
 #### Solution
 In the provided output file, the title and the challenge description state that this is a Caesar cipher where each message is shifted using a repeating pattern: 3, 5, 2, 4, 1.
-![](/images/teknocom/caesar/1.png)
+![](./assets/caesar/1.png)
 Using the Caesar Cipher tool at https://cryptii.com/pipes/caesar-cipher and trying those shift values (cycling through the pattern for each segment/message) reveals the flag.
 #### Flag
 Teknocom{Th1s_C4es4r_1s_4_J0k3_S1mpl3r_Th4n_Y0u}
@@ -533,11 +533,11 @@ Teknocom{Breaking_P41ll13r_Really_Was_A_Bad_Idea}
 Solve the impossible math madness… if you dare.
 nc 38.47.176.164 2014
 #### Solution
-![alt text](image.png)
+![alt text](./assets/image.png)
 The server initializes three important parameters: `level = 2048`, `target = 2048`, and `finish = 8`. These values control the instance size and the minimum bit-length requirement for the answer.
-![alt text](image-1.png)
+![alt text](./assets/image-1.png)
 In each round, the server generates a number `k` as a perfect square, `k = getrandbits(level) ** 2`, then sends JSON `{"k": k, "level": level}` to the user. Because `k` is always of the form `s²`, we can deterministically work with `s = sqrt(k)`.
-![alt text](image-2.png)
+![alt text](./assets/image-2.png)
 When receiving our answer, the server rejects zero/negative values; ensures both `a` and `b` have bit length greater than `2048`; and checks the ratio:
 $$
 \frac{a^2 + ab + b^2}{2ab + 1} = k
@@ -723,7 +723,7 @@ def solve(path="output.txt"):
         flag = m_bytes.decode()
     except UnicodeDecodeError:
         flag = repr(m_bytes)
-   
+
     print(f"flag = {flag}")
 
 
@@ -739,12 +739,12 @@ Teknocom{Br1ng_Me_Th3_Pr1m3s_p_plus_q}
 This “top-notch” login system lets you pick a user… but surely nothing will happen if you aim for admin, right? Go ahead, I’m sure it’s perfectly safe.
 nc 38.47.176.164 3042
 #### Solution
-![alt text](<Screenshot 2025-09-09 030819.png>)
-![alt text](<Screenshot 2025-09-09 030902.png>)
+![alt text](<./assets/Screenshot 2025-09-09 030819.png>)
+![alt text](<./assets/Screenshot 2025-09-09 030902.png>)
 Static analysis with Ghidra on `main()` shows that numeric input is read into a signed 32-bit variable, a simple bound check is performed such as `if (sel >= 7) { puts("No"); exit; }`, then the value is truncated down to 16-bit (e.g., `uint16_t idx = (uint16_t)sel;`). This 16-bit index is then used to access a username pointer table. Finally, if `strncmp(name, "admin", 5) == 0`, the program runs `system("/bin/sh")`.
-![alt text](<Screenshot 2025-09-09 031300.png>)
+![alt text](<./assets/Screenshot 2025-09-09 031300.png>)
 In assembly, this pattern appears as a `movsx`/`mov` into a 32-bit register, then a `mov` into a 16-bit register (AX), and then a `movzx` when used as an index. There is a moment where a negative 32-bit value is truncated to 16-bit without preserving the sign, causing wraparound.
-![alt text](<Screenshot 2025-09-09 031429.png>)
+![alt text](<./assets/Screenshot 2025-09-09 031429.png>)
 Dynamic experiments via `nc` further confirm the bug. Negative input passes the `sel < 7` check. But immediately after the cast to unsigned 16-bit, it becomes `(sel & 0xFFFF)`, which can land exactly on the admin index. So validation is done at signed 32-bit width, but the actual use is based on the truncated 16-bit unsigned result. The formula is to take:
 $$
 n = 7 - 65536 \cdot k, \quad k \ge 1

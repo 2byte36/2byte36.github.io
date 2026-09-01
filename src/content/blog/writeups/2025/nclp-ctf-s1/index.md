@@ -2,13 +2,13 @@
 title: "NCLP CTF — Season 1"
 description: "Complete write-ups of challenge that I solved in CTF Competition held by Noctra Lupra Community under ID-Networkers."
 pubDate: "Oct 05 2025"
-heroImage: "/images/nclp/BANNER.png"
+heroImage: "./assets/BANNER.png"
 ---
 
 Complete write-ups of challenge that I solved in CTF Competition held by Noctra Lupra Community under ID-Networkers. I finished at the top of leaderboard and have received a specialist role for achieving the most solves in Digital Forensics, Reverse Engineering, and OSINT.
 
-![](/images/nclp/score.png)
-![](/images/nclp/image.png)
+![](./assets/score.png)
+![](./assets/image.png)
 
 ## Forensic
 ### a bit plan
@@ -19,11 +19,11 @@ I dare you can't find my flag
 #### Solution
 From the chall title, it references to steganography technique bit plane.
 
-![Stego Image](/images/nclp/a_bit_plan/image.png)
+![Stego Image](./assets/a_bit_plan/image.png)
 
 With tools from (https://georgeom.net/StegOnline/upload), we can explore the bit plane of the image.
 
-![Bit Plane Analysis](/images/nclp/a_bit_plan/image-1.png)
+![Bit Plane Analysis](./assets/a_bit_plan/image-1.png)
 
 Flag found in Blue 0.
 
@@ -75,15 +75,15 @@ if __name__ == "__main__":
     main()
 ```
 
-![alt text](/images/nclp/chunking/image.png)
+![alt text](./assets/chunking/image.png)
 
 From the rb64's values, It turns out that the encoding is base64 then gunzip. From the output of some decoded value, the result is just a `junk` and decoy.
 
-![alt text](/images/nclp/chunking/image-1.png)
+![alt text](./assets/chunking/image-1.png)
 
 Upon further analysis, found rb64's length that's suspicious (`H4sIAKGQvWgC/3MLcnSPNjTXNzSPtfWrCsrydQ/KjDQKy/XNM7DlihgmgAsA/HIt5OYAAAA=`), if we decode the result is a fragment [17/17] and base64 chunk.
 
-![alt text](/images/nclp/chunking/image-2.png)
+![alt text](./assets/chunking/image-2.png)
 
 From the fragment, we know that the difference from other payloads is the `x-campaign`. The suspicious payload has `x-campaign = koi-44291a1b`. With that information, we can gather all of the fragments then decode it to retrieve the flag.
 
@@ -135,7 +135,7 @@ def main():
             continue
         for i, b64part in patt.findall(decoded):
             frags[int(i)] = b64part
-    
+
     joined_b64 = ''.join(frags[i] for i in sorted(frags))
     try:
         print(base64.b64decode(joined_b64).decode('utf-8'))
@@ -149,38 +149,38 @@ if __name__ == "__main__":
 #### Flag
 NCLPS1{gz_m3rup4kAn_mUlt1m3mBer_bUk4n_P3r_cHunK_74c0dbcef2}
 
-### Evaporated 
+### Evaporated
 
 #### Description
 Someone is hiding something there, but I don't know what they are hiding
 
 #### Solution
-![](/images/nclp/evaporated/image.png)
+![](./assets/evaporated/image.png)
 
 We are given evidence file named `evaporated.001`. With autopsy, we know that there is deleted file name `logo noctra lupra.png`.
 
-![](/images/nclp/evaporated/image-1.png)
+![](./assets/evaporated/image-1.png)
 
 When opening the PNG file, it seems corrupt. From then, I analyzed it with hexeditor to check the hex signature of this file. A valid PNG file always starts with 8 bytes signature containing `89 50 4E 47 0D 0A 1A 0A`. But, in this file, it doesn't start like that, so I fixed it.
 
-![](/images/nclp/evaporated/image-2.png)
-![](/images/nclp/evaporated/fix.png)
+![](./assets/evaporated/image-2.png)
+![](./assets/evaporated/fix.png)
 
-After recovering the PNG, I checked the typical steganography techniques. But it doesn't return anything valuable. 
+After recovering the PNG, I checked the typical steganography techniques. But it doesn't return anything valuable.
 I have an assumption that there is a mismatch on the size (width x height) of this PNG.
 
-![](/images/nclp/evaporated/image-3.png)
+![](./assets/evaporated/image-3.png)
 
 In PNG file, width and height are saved in **IHDR** chunk. So, I changed the value of the **height** so the viewer can render it.
 
-![](/images/nclp/evaporated/image-4.png)
+![](./assets/evaporated/image-4.png)
 
 After I changed it, the flag appears in the bottom of the file.
 
 #### Flag
 NCLPS1{t4k_kus4ngkA_t3rny4Ta_fl4gny4_b3rsembuny1_09217b9c25}
 
-### Forgotten Fragments 
+### Forgotten Fragments
 
 #### Description
 Forgotten fragments of the screen still linger in the client's memory.
@@ -192,7 +192,7 @@ xxd -g 1 -l 64 Cache0000.bin
 
 I identified the given file with hexdump and it turns out that the first byte structure is RDP cache.
 
-![alt text](/images/nclp/forgotten_frag/image.png)
+![alt text](./assets/forgotten_frag/image.png)
 
 To extract it, I use [bmc-tools](https://github.com/ANSSI-FR/bmc-tools).
 
@@ -200,31 +200,31 @@ To extract it, I use [bmc-tools](https://github.com/ANSSI-FR/bmc-tools).
 python3 bmc-tools.py -s Cache0000.bin -b -d ./out
 ```
 
-![alt text](/images/nclp/forgotten_frag/image-1.png)
+![alt text](./assets/forgotten_frag/image-1.png)
 
 After that, in /out we can see the result and the collage named **`_collage.bmp`**. Zoom in on the clearest tiles to get the flag.
 
 #### Flag
 NCLPS1{in1_ng4p4in_bAngG,_bElaJar_Ya_b4ng?_9c84ea66ff}
 
-### From Outer Space 
+### From Outer Space
 
 #### Description
 Sinyal misterius
 
 #### Solution
-![alt text](/images/nclp/outer_space/image-1.png)
+![alt text](./assets/outer_space/image-1.png)
 
 I checked what the given file actually is and it turns out that's a RIFF audio file.
 
-![alt text](/images/nclp/outer_space/image.png)
+![alt text](./assets/outer_space/image.png)
 
 One of the typical audio steganography techniques is using SSTV, so I tried to decode it with [SSTV Decoder](https://sstv-decoder.mathieurenaud.fr/) and I could retrieve the flag.
 
 #### Flag
 NCLPS1{m44f_ya_b3r1sik_t3lin94_am4n_kan?}
 
-### Incident Trace 
+### Incident Trace
 
 #### Description
 Sebuah mesin memperlihatkan aktivitas tak biasa, diduga terinfeksi binary berbahaya. Timmu berhasil memperoleh memory dump dari mesin tersebut. Periksa lebih dalam untuk menemukan artefak penting yang tersembunyi ataupun mencurigakan.
@@ -234,8 +234,8 @@ Note: Flag has 2 parts
 #### Solution
 We're given `*.lime` file (Linux memory extractor). For the further analysis, I'm using volatility 3 to extract the dump of process and memory.
 
-![alt text](/images/nclp/incident_trace/image.png)
-![alt text](/images/nclp/incident_trace/image-1.png)
+![alt text](./assets/incident_trace/image.png)
+![alt text](./assets/incident_trace/image-1.png)
 
 ```bash
 vol -f incident_trace.lime linux.psaux.PsAux
@@ -261,7 +261,7 @@ vol -f incident_trace.lime linux.vmayarascan.VmaYaraScan --pid "597" --yara-file
 
 With plugin linux.vmayarascan.VmaYaraScan and yara rule, I targeted the suspicious processes before.
 
-![alt text](/images/nclp/incident_trace/image-2.png)
+![alt text](./assets/incident_trace/image-2.png)
 
 From the result, I got the partA of the flag in pid 1056, but the pid 597 doesn't returns anything.
 
@@ -279,14 +279,14 @@ vol -f incident_trace.lime linux.vmayarascan.VmaYaraScan --pid "597" --yara-file
 
 Further scanning, I dump all of strings from pid 597 with yara rule.
 
-![alt text](/images/nclp/incident_trace/image-3.png)
+![alt text](./assets/incident_trace/image-3.png)
 
 PartB found in the response body of the c2, assamble it to get the correct flag.
 
 #### Flag
 NCLPS1{w00owWwW_k4mu_men3muK4n_fLa9_d1_h34p_seLanjuTNy4_d1_n3TwoRk_vla_C2_buff3r_2fafe5711d}
 
-### Layers 
+### Layers
 
 #### Description
 Sebuah layanan internal (web static di reverse Nginx dengan backend di /api) sempat dibuild dan didistribusikan. Setelah itu, salah satu developer mengakui pernah memasukkan sebuah berkas teks berisi token internal ke dalam layanan tersebut, lalu diubah isinya beberapa waktu kemudian, dan akhirnya dihapus pada build berikutnya. Untuk keperluan audit & rotasi kredensial, tim diminta memastikan apakah artefak token itu masih tersisa, dan bila masih ada mengambil nilai token tersebut.
@@ -303,7 +303,7 @@ skopeo copy oci-archive:layers.tar docker-archive:layers-docker.tar:nclp/layers:
 dive docker-archive://layers-docker.tar
 ```
 
-![alt text](/images/nclp/layers/image.png)
+![alt text](./assets/layers/image.png)
 
 With `dive`, I analyzed layers that contain some suspicious instructions. There is a `COPY flag.txt /root/flag.txt` instruction. Upon analyzing this, I can get the layer ID `da43bac397f47302e4e2ad61c7ab22da577ef41d77c194a8fab68a2e6cb42499` of the instruction. The next step is to extract the tar file based on the layer ID, then read the flag.txt.
 
@@ -311,14 +311,14 @@ With `dive`, I analyzed layers that contain some suspicious instructions. There 
 tar xvf layers-docker.tar
 ```
 
-![alt text](/images/nclp/layers/image-1.png)
+![alt text](./assets/layers/image-1.png)
 
 **Reference** https://05t3.github.io/posts/Urchinsec-CTF/
 
 #### Flag
 NCLPS1{d33p_l4yer5_pRes3rVe_t1meLinE_M0re_th4n_y0u_th1nk_822644845a}
 
-### Redaction Fail 
+### Redaction Fail
 
 #### Description
 Divisi compliance menyerahkan sebuah dokumen final yang telah dirilis ke pihak eksternal. Dokumen tersebut memuat blok hitam menutupi sebuah informasi sensitif. Ada dugaan bahwa proses "redaksi" tidak dilakukan dengan benar.
@@ -326,7 +326,7 @@ Divisi compliance menyerahkan sebuah dokumen final yang telah dirilis ke pihak e
 #### Solution
 I started with opening the PDF file and seeing the parts that got censored. But most of all, it's just a decoy. The next step is to analyze the PDF structures with strings.
 
-![alt text](/images/nclp/redaction/image.png)
+![alt text](./assets/redaction/image.png)
 
 I found suspicious things at the 7th object. That object contains properties with `ASCII85Decode`, `FlateDecode` and some random encoding. This indicates that the data got encoded with ASCII85 then compressed with zlib/deflate. I decoded the data with this script:
 
@@ -349,22 +349,22 @@ print(result.decode("utf-8", errors="replace"))
 #### Flag
 NCLPS1{teRny4ta_fl4g_d1_r3v1Si0n_z3Ro_iNcr3MenTal_uPddaTe_m3n1pu_m4ta_0dd31503e3}
 
-### Reward Runner 
+### Reward Runner
 
 #### Description
 Rani baru saja mendapatkan email aneh. Pada email tersebut Rani diberikan file "rewardrunner.exe". Saat dijalankan Rani kehilangan pesan penting-nya. Tolong Rani membalikkan pesan penting tersebut.
 
 #### Solution
-![alt text](/images/nclp/reward_runner/image.png)
-![alt text](/images/nclp/reward_runner/image-1.png)
+![alt text](./assets/reward_runner/image.png)
+![alt text](./assets/reward_runner/image-1.png)
 
 Firstly, I opened the email and checked the message. In the email there is a base64 string, so I decoded it and it turns out that's a zip file.
 
-![alt text](/images/nclp/reward_runner/image-2.png)
+![alt text](./assets/reward_runner/image-2.png)
 
 I tried to extract the file, but it needs a password. In the email, there is a pastebin link that refers to *known plaintext attack*.
 
-![alt text](/images/nclp/reward_runner/image-3.png)
+![alt text](./assets/reward_runner/image-3.png)
 
 Viewing with file explorer, I see a `.git` directory included with `HEAD` file in it. This can be a source to do the known plaintext attack for the encrypted zip file since the `HEAD` file is predictable.
 
@@ -374,15 +374,15 @@ bkcrack -C out.zip -c ".git/HEAD" -p HEAD
 
 I'm using `bkcrack` to do the attack with the command above. The command tells `bkcrack` to get the ciphertext from `rewardrunner.zip` and point it to a suitable known file to retrieve the key of the zip file.
 
-![alt text](/images/nclp/reward_runner/image-4.png)
+![alt text](./assets/reward_runner/image-4.png)
 
 `bkcrack` then counts the encryption key for all of the archive and we can extract the files in it with the key.
 
-![alt text](/images/nclp/reward_runner/image-5.png)
+![alt text](./assets/reward_runner/image-5.png)
 
 Next step, with the found key, we can decrypt the zip file with command above and the output is `rewardrunner.exe`.
 
-![alt text](/images/nclp/reward_runner/image-6.png)
+![alt text](./assets/reward_runner/image-6.png)
 
 Upon analysis to the `rewardrunner.exe` it seems this is a compiled file from .NET. I then decompiled it with [ILSpy](https://github.com/icsharpcode/ILSpy) to seek the encryption algorithm and the main code.
 
@@ -494,39 +494,39 @@ print(pt)
 
 Running the script to the `secret.txt.idn.enc` that we extracted earlier we can decrypt it and got the flag.txt file.
 
-![alt text](/images/nclp/reward_runner/image-7.png)
+![alt text](./assets/reward_runner/image-7.png)
 
 #### Flag
 NCLPS1{d0nt_be_l1ke_Rani,_y0OoOu_h4ve_t0_be_aw4r3_of_y0urr_3nv1ronm3nt_eef53df1e1}
 
-### Secret Signal 
+### Secret Signal
 
 #### Description
 Fenomena aneh terjadi: sebuah media penyimpanan yang tampaknya memiliki kapasitas tak terbatas. Namun, keajaiban ini hanyalah ilusi—ada sesuatu yang tersembunyi di balik 'glitch' tersebut. Setiap lapisan data seakan menutupi lapisan berikutnya, membuat isi sebenarnya sulit dikenali. Petunjuknya ada pada struktur file yang tidak biasa, seakan ada celah di antara byte yang bisa dimanfaatkan. Bisakah kamu menemukan rahasia yang tersembunyi di balik anomali penyimpanan tak berujung ini?
 URL: https://www.youtube.com/watch?v=g8vDg94BA3U
 
 #### Solution
-From the chall description, it refers to **Infinite Storage Glitch (ISG)** that exploit media file (video) as a hidden storage. 
+From the chall description, it refers to **Infinite Storage Glitch (ISG)** that exploit media file (video) as a hidden storage.
 
 ```bash
 yt-dlp -F https://www.youtube.com/watch?v=g8vDg94BA3U
 ```
-![alt text](/images/nclp/secret_signal/image.png)
+![alt text](./assets/secret_signal/image.png)
 
 Firstly, check the Youtube video resolution format with `yt-dlp` using the command above.
 
 ```bash
 yt-dlp -f 137 https://www.youtube.com/watch?v=g8vDg94BA3U
 ```
-![alt text](/images/nclp/secret_signal/image-1.png)
+![alt text](./assets/secret_signal/image-1.png)
 
 From the format list, I found that the video has **1080p** resolution in format ID `137`, then downloaded the video with that resolution.
 
-![alt text](/images/nclp/secret_signal/image-2.png)
+![alt text](./assets/secret_signal/image-2.png)
 
 Next step is extracting the ISG with tools that available in GitHub: [Infinite\_Storage\_Glitch](https://github.com/KKarmugil/Infinite_Storage_Glitch).
 
-![alt text](/images/nclp/secret_signal/image-3.png)
+![alt text](./assets/secret_signal/image-3.png)
 
 The output is `reverse.mkv`, I checked it with file command, and it turns out that's a **ZIP file**.
 
@@ -537,22 +537,22 @@ unzip secret.zip
 
 I extracted that file and from the output there's an image with the flag in it.
 
-![](/images/nclp/secret_signal/3.png)
+![](./assets/secret_signal/3.png)
 
 #### Flag
 NCLPS1{k1ta_bisA_menyimPAn_fiLe_t4npa_b4tas_d1_yOutub3_f9c3d7cd98}
 
-### the yuesbi 
+### the yuesbi
 
 #### Description
 harusnya kamu sudah tau ini apa? menarik bukan?
 
 #### Solution
-![alt text](/images/nclp/the_yuesbi/image.png)
+![alt text](./assets/the_yuesbi/image.png)
 
 Given a pcap file, and I opened it with Wireshark. Upon analyzing the packets, it seems that this file is enumeration of USB device (GET_DESCRIPTOR, SET_CONFIGURATION) and indicates **HID Keyboard**.
 
-![alt text](/images/nclp/the_yuesbi/image-1.png)
+![alt text](./assets/the_yuesbi/image-1.png)
 
 I'm using tools from (https://usb.org/sites/default/files/hut1_5.pdf) to detect all captured packets from the keyboard through HID data and decode it automatically. The output shows the flag.
 
@@ -560,20 +560,20 @@ I'm using tools from (https://usb.org/sites/default/files/hut1_5.pdf) to detect 
 
 NCLPS1{t1d4k_H4nYya_n3twOrk_y4ng_4da_traffFf1c_USBb_juug4_ad4_tr4ff1cny4_7938ae8d3c}
 
-### traficc 
+### traficc
 
 #### Description
 Aku baru saja kehilangan pesan pentingku. Tampaknya ada sesuatu yang aneh pada jaringanku. Bantu aku mencarinya.
 
 #### Solution
-![alt text](/images/nclp/traficc/image.png)
+![alt text](./assets/traficc/image.png)
 
 Given two files for this chall, pcapng and .dd. For the first analysis, I did strings command for both of the files then piped it to grep the flag format (`NCLPS1{`), and somehow it gives the flag lol. (I know it's unintended but that's how you recon all artifacts that are given by the chall hehe).
 
 #### Flag
 NCLPS1{h0w_yOu_g0t_m3_4re_you_t1r3d_t0_f1nd_m3?_fd4ea173b1}
 
-### Whisper From The Basement 
+### Whisper From The Basement
 
 #### Description
 Sebuah komputer berperilaku aneh dan langsung diisolasi dari jaringan. Kamu diberi akses ke klon terkarantina dari mesin tersebut. Akses keluar (egress) ke internet diblokir, jadi segala upaya "call home" akan gagal.
@@ -721,7 +721,7 @@ CLI kecil untuk mengaktifkan fitur “Pro” menggunakan license key berformat k
 
 #### Solution
 
-![alt text](/images/nclp/activator/image.png)
+![alt text](./assets/activator/image.png)
 
 From the binary, I decompile it with Ghidra and the flag was hardcoded in the main function.
 
@@ -817,7 +817,7 @@ Perusahaan sedang menjalani audit operasional dan kepatuhan. Dalam rangka verifi
 Sebagai engineer yang ditugaskan untuk health-check integrasi, Anda perlu membuktikan bahwa token tersebut benar-benar terbentuk saat proses berjalan
 
 #### Solution
-![alt text](/images/nclp/endpoint_diag/image.png)
+![alt text](./assets/endpoint_diag/image.png)
 
 Decompiler shows only two functions `int main(void)` and `void* eraser(void*)`. ChaCha20 looks very clear with state constant: `0x61707865`, `0x3320646e`, `0x79622d32`, `0x6b206574` ("expand 32-byte k") and rotate pattern **16, 12, 8, 7** on the round.
 
@@ -887,7 +887,7 @@ int main(void)
   uint8_t block [64];
   byte local_48 [8];
   long local_40;
-  
+
   local_40 = *(long *)(in_FS_OFFSET + 0x28);
   sVar4 = sysconf(0x1e);
   __len = 0x1000;
@@ -1186,7 +1186,7 @@ void * eraser(void *arg)
   char *pcVar2;
   long in_FS_OFFSET;
   timespec ts;
-  
+
   lVar1 = *(long *)(in_FS_OFFSET + 0x28);
   ts.tv_sec = 0;
   ts.tv_nsec = 700000000;
@@ -1452,7 +1452,7 @@ void initialize_keys(int num_keys,int key_len)
   int i;
   int j;
   int j_1;
-  
+
   g_key_store = (char **)malloc((long)num_keys << 3);
   if (g_key_store == (char **)0x0) {
                     /* WARNING: Subroutine does not return */
@@ -1489,7 +1489,7 @@ void initialize_keys(int num_keys,int key_len)
 }
 ```
 
-Decompiled shows `initialize_keys(num_keys, key_len)` function that allocate key pointer array in the heap, then fill it with every key from `/dev/urandom`. From the constant in the call‑site, we can see `num_keys = 0x32` (50) and `key_len = 0x80` (128). 
+Decompiled shows `initialize_keys(num_keys, key_len)` function that allocate key pointer array in the heap, then fill it with every key from `/dev/urandom`. From the constant in the call‑site, we can see `num_keys = 0x32` (50) and `key_len = 0x80` (128).
 
 ```c
 void encrypt_data(uchar *data,int data_len,int num_keys,int key_len)
@@ -1501,7 +1501,7 @@ void encrypt_data(uchar *data,int data_len,int num_keys,int key_len)
   uchar *data_local;
   int k;
   int i;
-  
+
   if (g_key_store != (char **)0x0) {
     for (k = 0; k < num_keys; k = k + 1) {
       for (i = 0; i < data_len; i = i + 1) {
@@ -1514,7 +1514,7 @@ void encrypt_data(uchar *data,int data_len,int num_keys,int key_len)
 }
 ```
 
-`encrypt_data(buf, len, num_layers, key_len)` XOR for each layer of `i`, every byte `buf[j]` XOR with `key[i][j % key_len]`. With that, every layer of this will be equivalent with XOR plaintext with **one combined keystream** throughout 128 byte, that XOR each position by 50 key. 
+`encrypt_data(buf, len, num_layers, key_len)` XOR for each layer of `i`, every byte `buf[j]` XOR with `key[i][j % key_len]`. With that, every layer of this will be equivalent with XOR plaintext with **one combined keystream** throughout 128 byte, that XOR each position by 50 key.
 
 ```c
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
@@ -1528,7 +1528,7 @@ void create_memory_dump(void)
   long in_FS_OFFSET;
   pid_t pid;
   char cmd [256];
-  
+
   lVar1 = *(long *)(in_FS_OFFSET + 0x28);
   uVar2 = getpid();
   snprintf(cmd,0x100,"gcore -o temp_dump %d > /dev/null 2>&1 && mv temp_dump.%d coredmp",
@@ -1670,7 +1670,7 @@ undefined8 main(void)
   char local_b8 [32];
   char local_98 [136];
   long local_10;
-  
+
   local_10 = *(long *)(in_FS_OFFSET + 0x28);
   printf("Enter your 8-digit serial key: ");
   iVar1 = __isoc99_scanf(&DAT_00102038,local_b8);
@@ -1972,7 +1972,7 @@ void mangle(long param_1,long param_2,long param_3)
 
 {
   undefined4 local_c;
-  
+
   for (local_c = 0; local_c < 0x41; local_c = local_c + 1) {
     *(byte *)(param_2 + local_c) =
          *(byte *)(param_3 + (local_c * 7) % 0x41) ^ *(byte *)(param_1 + local_c);
@@ -1988,7 +1988,7 @@ undefined8 validate(long param_1,long param_2)
 
 {
   int local_c;
-  
+
   local_c = 0;
   while( true ) {
     if (0x40 < local_c) {
@@ -2003,12 +2003,12 @@ undefined8 validate(long param_1,long param_2)
 
 validate do for i in 0..64 if out[i] != expected[i] return false.
 
-![alt text](/images/nclp/obfs/image-1.png)
-![alt text](/images/nclp/obfs/image.png)
+![alt text](./assets/obfs/image-1.png)
+![alt text](./assets/obfs/image.png)
 
 From the decompiled we can know the address of xor_key is 0x102080, tbl is 0x102020, and target constant arranged in stack by main.
 
-![alt text](/images/nclp/obfs/image-2.png)
+![alt text](./assets/obfs/image-2.png)
 
 With GDB, we can get actual target bytes that used in the runtime. Set breakpoint in the `validate` then `x/65bx $rsi` to get `expected`
 
@@ -2607,12 +2607,12 @@ def decrypt(path: str, master: str) -> str:
     x = _unrotate(x, rot)
     pt = AES.new(kMain, AES.MODE_CBC, iv).decrypt(x)
     pt = _pkcs7_unpad(pt)
-    
+
     return gzip.decompress(pt).decode("utf-8", "replace")
 
 def main():
     files = sorted(glob.glob(os.path.join(VAULT_DIR, "*.nclp")))
-    
+
     for p in files:
         print(f"===== FILE: {os.path.basename(p)} =====")
         try:
@@ -2651,7 +2651,7 @@ int main(void)
   pthread_t t1;
   pthread_t t2;
   timespec ts;
-  
+
   lVar1 = *(long *)(in_FS_OFFSET + 0x28);
   __len_00 = sysconf(0x1e);
   if ((long)__len_00 < 1) {
@@ -2719,7 +2719,7 @@ LAB_001013bb:
 }
 ```
 
-The main function shows `mmap` alocation for some of page, global variable name `g_page` and `g_slot`, two functions as a thread worker. 
+The main function shows `mmap` alocation for some of page, global variable name `g_page` and `g_slot`, two functions as a thread worker.
 
 ```c
       while( true ) {
@@ -2735,9 +2735,9 @@ The main function shows `mmap` alocation for some of page, global variable name 
 
 In the main function, there is a loop that produces byte token usomh bitwise (shift/xor) and combine it with byte from an big array in the .rodata.
 
-![alt text](/images/nclp/rotator/image.png)
+![alt text](./assets/rotator/image.png)
 
-On the **.rodata**. I found a long array byte (`blob`) that looks like used for key/seed because the the size is fit and there is XREF to the generator function. 
+On the **.rodata**. I found a long array byte (`blob`) that looks like used for key/seed because the the size is fit and there is XREF to the generator function.
 
 ```c
 void * loader_th(void *arg)
@@ -2750,7 +2750,7 @@ void * loader_th(void *arg)
   byte bVar5;
   int iVar6;
   timespec ts;
-  
+
   do {
     g_busy = 1;
     iVar6 = 1 - g_active;
@@ -2829,13 +2829,13 @@ NCLPS1{pee_balap._k3ren_k4mu_b1s4_m3nYeL3s41kan_R4ce_c0nd1Tion_4tau_kAmu_DeCrYpt
 Apakah kalian pikir reverse chall hanya berupa c code? Bagaimana dengan chall sederhana ini, hope you find how the code is work :D
 
 #### Solution
-The main function: 
+The main function:
 
 ```llvm
 @alloc_27e20ab4610c44e7cd1ed777571a5eaa = private unnamed_addr constant [4 x i8] c"flag", align 1
 ```
 
-1. Program open literal file labeled `"flag"`, 
+1. Program open literal file labeled `"flag"`,
 
 ```llvm
 ; call std::fs::File::open
@@ -2844,7 +2844,7 @@ The main function:
   %16 = invoke { i64, ptr } @...Read$GT$14read_to_string...
 ```
 
-2. Read the content as `String`, 
+2. Read the content as `String`,
 
 ```llvm
 ; invoke hex::encode
@@ -2853,7 +2853,7 @@ The main function:
   invoke void @_ZN4core4iter6traits8iterator8Iterator7step_by17h643e416d973a3425E(..., i64 2)
 ```
 
-3. Process hex pair from the string to byte vector, 
+3. Process hex pair from the string to byte vector,
 
 ```llvm
 ; invoke <alloc::string::String as core::ops::index::Index<I>>::index
@@ -2862,7 +2862,7 @@ The main function:
   invoke void @_ZN5alloc3vec16Vec$LT$T$C$A$GT$4push17h442119782527e08dE(ptr align 8 %bytes_as_number, i8 %number,...)
 ```
 
-4. Combine that byte to some big number (BigUint, big‑endian), 
+4. Combine that byte to some big number (BigUint, big‑endian),
 
 ```llvm
 ; invoke num_bigint::biguint::BigUint::from_bytes_be
@@ -2920,7 +2920,7 @@ undefined8 main(undefined8 param_1,undefined8 param_2,char **param_3)
   char *local_48;
   undefined8 local_40;
   long local_30;
-  
+
   local_30 = *(long *)(in_FS_OFFSET + 0x28);
   __buf = malloc(0x3f60);
   if (__buf == (void *)0x0) {
@@ -2961,11 +2961,11 @@ undefined8 main(undefined8 param_1,undefined8 param_2,char **param_3)
 
 Program decompress blob (`uncompress`) to buffer, create memfd, write the result to memfd, and run ELF from the result via `fexecve`. In others word, we should extract the second ELF for further analysis.
 
-![alt text](/images/nclp/sentinelz/image.png)
+![alt text](./assets/sentinelz/image.png)
 
-From the output of `readelf -S sentinelz`, section `.rodata` is in the `0x2000` with offset `0x2000`. 
+From the output of `readelf -S sentinelz`, section `.rodata` is in the `0x2000` with offset `0x2000`.
 
-![alt text](/images/nclp/sentinelz/image-1.png)
+![alt text](./assets/sentinelz/image-1.png)
 
 `packed_data` in the `0x2060` with length `0xBD6` (3030 byte). file offset extraction:
 
@@ -3022,7 +3022,7 @@ undefined8 main(void)
   undefined1 local_48 [16];
   undefined1 local_38 [16];
   long local_20;
-  
+
   bVar11 = 0;
   local_20 = *(long *)(in_FS_OFFSET + 0x28);
   local_128 = (undefined1  [16])0x0;
@@ -3427,7 +3427,7 @@ if (flag.charCodeAt(-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
 
 Opening the artifact, I found some pattern that compare `charCodeAt` with obfuscated number that created from JavaScript reversed composition pattern `-~[]`.
 
-![alt text](/images/nclp/tilde/image.png)
+![alt text](./assets/tilde/image.png)
 
 I found reference https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_NOT, Operator ~ will return -1. With that, `-~x ≡ x + 1`. For `[]`, because the value is null it will converted to 0.
 
@@ -3472,15 +3472,15 @@ Link: http://bit.ly/46wt9LG
 #### Solution
 From the URL we get an video.
 
-![alt text](/images/nclp/energy/img.png)
+![alt text](./assets/energy/img.png)
 
 I screenshoted the most visible building to analyze it.
 
-![alt text](/images/nclp/energy/image.png)
+![alt text](./assets/energy/image.png)
 
 Search it with google image and I found that's a PLTU Paiton Probolinggo building.
 
-![alt text](/images/nclp/energy/image-1.png)
+![alt text](./assets/energy/image-1.png)
 
 Search it on the gmaps then go to recent review to get the flag.
 
@@ -3510,28 +3510,28 @@ Temukan pesan rahasia di hotel tersebut. Answer format: NCLPS1{.*}
 #### Solution
 Because this is my first chall to doxx from ENB ID, I did little surfing and found threads https://www.ispreview.co.uk/talk/threads/how-to-see-which-cell-tower-i-have-connected-to.39090/ that tells ENB ID can be used to search `cell tower` with https://cellmapper.net.
 
-![alt text](/images/nclp/ghostline/image.png)
+![alt text](./assets/ghostline/image.png)
 
 In the search tab input the ENB ID and Malang according to the chall description.
 
-![alt text](/images/nclp/ghostline/image-1.png)
+![alt text](./assets/ghostline/image-1.png)
 
 First answer is 510 / 10 / 6204
 
-![alt text](/images/nclp/ghostline/image-2.png)
+![alt text](./assets/ghostline/image-2.png)
 
 Second answer is -78 dBm
 
-![alt text](/images/nclp/ghostline/image-3.png)
+![alt text](./assets/ghostline/image-3.png)
 
-Third answer is on the URL 
+Third answer is on the URL
 
-![alt text](/images/nclp/ghostline/image-4.png)
+![alt text](./assets/ghostline/image-4.png)
 
 Fourth answer, enter the latitude and longitude to the gmaps then there is a hotel that accross with the tower location.
 
-![alt text](/images/nclp/ghostline/image-5.png)
-![alt text](/images/nclp/ghostline/image-6.png)
+![alt text](./assets/ghostline/image-5.png)
+![alt text](./assets/ghostline/image-6.png)
 
 Fifth answer, open the recent review there is a review with base64 encoding, decode this and we get the flag.
 
@@ -3570,36 +3570,36 @@ Question 8
 Sebutkan tanggal mulai kuliah anak pertama Yonny. Answer format: 11 Januari 1980
 
 #### Solution
-![alt text](/images/nclp/halo/image.png)
-![alt text](/images/nclp/halo/image-1.png)
+![alt text](./assets/halo/image.png)
+![alt text](./assets/halo/image-1.png)
 
 With google dorking, I found two archive `putusan MA` from Yonny Dwi Widodo.
 
-![alt text](/images/nclp/halo/image-2.png)
+![alt text](./assets/halo/image-2.png)
 
 First answer is `YONI DWI WIDODO`.
 
-![alt text](/images/nclp/halo/image-3.png)
+![alt text](./assets/halo/image-3.png)
 
 Second answer is `ETRIN KUMAIDAH`.
 
-![alt text](/images/nclp/halo/image-4.png)
+![alt text](./assets/halo/image-4.png)
 
 Third answer is `KEPANJEN`.
 
-![alt text](/images/nclp/halo/image-5.png)
+![alt text](./assets/halo/image-5.png)
 
 Fourth answer is `CARISSA AULIA NORIKA SHANDY`.
 
-![alt text](/images/nclp/halo/image-6.png)
+![alt text](./assets/halo/image-6.png)
 
 Fifth answer is `29 September 2004`.
 
-![alt text](/images/nclp/halo/image-7.png)
+![alt text](./assets/halo/image-7.png)
 
 Sixth answer, Google dorking with the name of first kid as keyword we can know that she ever written a article `Artificial Intelligence Dalam Konteks Manusia: Transformasi Industri dan Kehidupan Sehari-hari Manusia`.
 
-![alt text](/images/nclp/halo/img.jpg)
+![alt text](./assets/halo/img.jpg)
 
 Seventh answer, Looking the data of the fist kid in the PDDIKTI, we know that she go to `Universitas Muhammadiyah Malang` and for the Eighth answer we can looked it up there too `18 September 2023`.
 
@@ -3609,17 +3609,17 @@ Seventh answer, Looking the data of the fist kid in the PDDIKTI, we know that sh
 Yumm...
 
 #### Solution
-![alt text](/images/nclp/hotdog/image-2.png)
+![alt text](./assets/hotdog/image-2.png)
 
 Searched it with google image, I found a CTF write up that had same picture https://zenn.dev/sutonchoko/articles/efc7fa69135eaa. In the write up, the author explained that Street View from the location were taken from 2022 meanwhile the picture were taken from 2024, so it should be guessed from around of the map above.
 
-![alt text](/images/nclp/hotdog/image-1.png)
+![alt text](./assets/hotdog/image-1.png)
 
 I seen that this picture were taken near `maydonoz doner` and in the gmaps there is that location of that place so we can take a little guess around that location.
 
-![alt text](/images/nclp/hotdog/image.png)
+![alt text](./assets/hotdog/image.png)
 
-Above is the right answer. 
+Above is the right answer.
 
 #### Flag
 50.107405285826665, 8.665344785621073
@@ -3630,11 +3630,11 @@ Above is the right answer.
 Kemarin aku makan disini, tapi aku lupa lokasinya dimana, bantu aku cariin dong.
 
 #### Solution
-![alt text](/images/nclp/imeat/image.png)
+![alt text](./assets/imeat/image.png)
 
 From the picture there is the number of the KFC and when we search with google image, combined with keyword 1065 KFC and found the name of the KFC branch.
 
-![alt text](/images/nclp/imeat/image-1.png)
+![alt text](./assets/imeat/image-1.png)
 
 Because the picture looked like around entrance door, I can set it there and got the lalitude and longitudenya.
 
@@ -3668,26 +3668,26 @@ Question 7
 Apa nilai SPKI untuk host yang berada di Singapura?
 
 #### Solution
-![alt text](/images/nclp/platform/image.png)
+![alt text](./assets/platform/image.png)
 
 First answer, With nslookup we can found IP from the mirrored web `47.84.89.245`.
-Second answer we can also get the ASN number `AS45102`. 
+Second answer we can also get the ASN number `AS45102`.
 Third answer, we can also get that this web is from`alibabagroup.com`.
 
-![alt text](/images/nclp/platform/image-1.png)
+![alt text](./assets/platform/image-1.png)
 
 Fourth answer, With censys.io, we can found ssh fingerprint `0dbb718212b8aaa007828afade57e242907c905c205b569ac6d04c44da4f7891`.
 
-![alt text](/images/nclp/platform/image-2.png)
+![alt text](./assets/platform/image-2.png)
 
 Fifth answer, I dorked with bing because there is possibility that the website used http and found `mmpconsulting.id`.
 
-![alt text](/images/nclp/platform/image-3.png)
+![alt text](./assets/platform/image-3.png)
 
 Sixth answer, with tools (https://mxtoolbox.com/SuperTool.aspx?action=ptr%3a103.196.153.70&run=toolpage) we got reverse dns is `ip-70-153-196-103.wjv-1.biznetg.io`.
 
-![alt text](/images/nclp/platform/image-4.png)
-![alt text](/images/nclp/platform/image-5.png)
+![alt text](./assets/platform/image-4.png)
+![alt text](./assets/platform/image-5.png)
 
 Seventh answer, because idk what the hell i spki is, I asked GPT and got the answer with command above. Output is `JiNhdHrUqJj2EKDMx1j9d2qdyljiUEVHAYQ5Le6MQLE=`.
 
@@ -3699,11 +3699,11 @@ Aku diberi tahu, kalau platform ini pernah melakukan sesuatu di masa lalu. Tapi 
 #### Solution
 To get the modification that web ever did, I use tools wayback machine from (https://archive.org).
 
-![alt text](/images/nclp/vehicle_time/image.png)
+![alt text](./assets/vehicle_time/image.png)
 
 With inputing the url, found there is a modification.
 
-![alt text](/images/nclp/vehicle_time/image-1.png)
+![alt text](./assets/vehicle_time/image-1.png)
 
 The flag is hardcoded in the view-source.
 

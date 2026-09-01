@@ -1,0 +1,6 @@
+{
+  "markdown.copyFiles.destination": {
+    "/src/content/blog/writeups/**/*": "assets/${fileName}"
+  },
+  "markdown.updateLinksOnFileMove.enabled": "always"
+}

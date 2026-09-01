@@ -2,12 +2,12 @@
 title: "Schematics NPC CTF 2025 Quals"
 description: "Write ups from the challenge that I solved alongside with collaboration of my team HARO2b in Qualifications of SCHEMATICS NPC CTF 2025"
 pubDate: "Oct 19 2025"
-heroImage: "/images/sch/HeaderNPC.jpg"
+heroImage: "./assets/hero.jpg"
 ---
 
 Write ups from the challenge that I solved alongside with collaboration of my team `HARO2b` in Qualifications of SCHEMATICS NPC CTF 2025. This is my team score when it got freezed :
 
-![](/images/sch/ScoreBoard.png)
+![](./assets/ScoreBoard.png)
 
 ## Web
 ### wongpress
@@ -21,13 +21,13 @@ you need to know how wordpress's ecosystem works, you are SUBS!
 
 #### Solution
 
-![](/images/sch/wongpress/image.png)
+![](./assets/wongpress/image.png)
 
 Given the WordPress website that has a register feature. After registration, we can't access the login page because it got defaced.
 
 From the given source code, there is `xmlrpc_authenticate`, a function in the xmlrpc.php that can be the way for us to login via XML-RPC.
 
-![](/images/sch/wongpress/image-1.png)
+![](./assets/wongpress/image-1.png)
 
 With calling this method in xmlrpc.php request and entering the registered creds, we can login and get the cookie (wordpress_logged_in_*) for the further recon.
 
@@ -37,16 +37,16 @@ The thing is, to check the content we create we must become the allowed_roles.
 
 Checking the other functions, there is a function that can update the user role from subscriber to the contributor `(update_user_preferences)`. All we need is just nonce that can be got after we login (check the xmlrpc_authenticate).
 
-![](/images/sch/wongpress/image-2.png)
+![](./assets/wongpress/image-2.png)
 
 We send the request to the /wp-admin/admin-ajax.php along with cookie, nonce, and action which value is `update_user_preferences`. We got success response to upgrade our role.
 
-![](/images/sch/wongpress/image-3.png)
+![](./assets/wongpress/image-3.png)
 
-After that, we can finally create a post and check it. We inject `metaWeblog.newPost` with `[schedule_content filter='$(ls)']` and the web responds with the ID of the content. 
+After that, we can finally create a post and check it. We inject `metaWeblog.newPost` with `[schedule_content filter='$(ls)']` and the web responds with the ID of the content.
 
-![](/images/sch/wongpress/image-4.png)
-![](/images/sch/wongpress/flag.png)
+![](./assets/wongpress/image-4.png)
+![](./assets/wongpress/flag.png)
 
 So we can access this via `/?p=$ID&preview=true`, and the response shows we got RCE then read the flag with `[schedule_content filter='$(base64$IFS-w0$IFS*ag\*)']` because of the blacklist.
 
@@ -61,15 +61,15 @@ Seorang hacker berhasil mengencrypt seluruh dokumen milik rey. Padahal salah sat
 
 #### Solution
 
-![](/images/sch/computero/Screenshot%202025-10-18%20195222.png)
+![](<./assets/computero/Screenshot 2025-10-18 195222.png>)
 
 Loading the artifact to Autopsy, we found a deleted file `ransom.exe` along with encrypted files.
 
-![](/images/sch/computero/Screenshot%202025-10-18%20193419.png)
+![](<./assets/computero/Screenshot 2025-10-18 193419.png>)
 
 Extract the ransom.exe and all of the encrypted files. When analyzing ransom.exe with pyi-archive_viewer we found an object named `encryptor`, so we extracted this object.
 
-![](/images/sch/computero/Screenshot%202025-10-18%20193807.png)
+![](<./assets/computero/Screenshot 2025-10-18 193807.png>)
 
 The output is encoded data that hides the source code. I asked GPT to return the actual source code, it turns out that the flow of the encoding is `reverse -> base64 -> zlib` that was done repeatedly.
 
@@ -143,15 +143,15 @@ Format flag : SCH25{Username_milik_user_yang_mengganti_password_dari_akun_admin}
 #### Solution
 The changing password usually requested from HTTP POST, so we filter the packet with `http.request.method == "POST"`.
 
-![](/images/sch/mistakez/Screenshot%202025-10-18%20175133.png)
+![](<./assets/mistakez/Screenshot 2025-10-18 175133.png>)
 
 From the filter, we found the first request to the endpoint `EditProfile.php`, so we assume that this is the valid session for admin and saved the cookie.
 
-![](/images/sch/mistakez/Screenshot%202025-10-18%20175448.png)
+![](<./assets/mistakez/Screenshot 2025-10-18 175448.png>)
 
-In further analysis, we found another user making a request to edit profile at frame `2512`. The cookie was `o5k1b0avhka3q6aeg4dg26888b`, which is different from the admin cookie before. 
+In further analysis, we found another user making a request to edit profile at frame `2512`. The cookie was `o5k1b0avhka3q6aeg4dg26888b`, which is different from the admin cookie before.
 
-![](/images/sch/mistakez/Screenshot%202025-10-18%20180231.png)
+![](<./assets/mistakez/Screenshot 2025-10-18 180231.png>)
 
 With this sus cookie, we can get the user from `/login.php` and the user is `InfokanCaraMembantaiETS`.
 
@@ -179,7 +179,7 @@ undefined8 FUN_0040390b(void)
   code *local_20;
   ulong local_18;
   uint local_c;
-  
+
   puVar2 = local_388;
   for (lVar1 = 0x6d; lVar1 != 0; lVar1 = lVar1 + -1) {
     puVar2[0] = 0;
@@ -211,7 +211,7 @@ void FUN_00403128(undefined4 *param_1)
   int local_11c;
   undefined1 local_118 [264];
   long local_10;
-  
+
   FUN_00401d85();
   FUN_00403002(param_1);
   FUN_00401d85();
@@ -248,7 +248,7 @@ undefined8 FUN_004020b5(long param_1,byte param_2)
 
 {
   undefined4 local_c;
-  
+
   for (local_c = 0; *(char *)(param_1 + local_c) != '\0'; local_c = local_c + 1) {
     *(byte *)(param_1 + local_c) = *(byte *)(param_1 + local_c) ^ param_2;
   }
@@ -263,7 +263,7 @@ undefined8 FUN_004020b5(long param_1,byte param_2)
 
 {
   undefined4 local_c;
-  
+
   for (local_c = 0; *(char *)(param_1 + local_c) != '\0'; local_c = local_c + 1) {
     *(byte *)(param_1 + local_c) = *(byte *)(param_1 + local_c) ^ param_2;
   }
@@ -321,7 +321,7 @@ void FUN_00402880(long param_1,long param_2,undefined8 param_3,undefined8 param_
   long local_20;
   undefined8 local_18;
   int local_c;
-  
+
   iVar2 = FUN_007cc940(&DAT_00a54580);
   if (iVar2 == 0) {
     local_d8 = (undefined1  [16])0x0;
@@ -369,7 +369,7 @@ undefined1 FUN_00402061(byte param_1,undefined4 param_2,undefined8 param_3)
 
 {
   undefined1 local_108 [256];
-  
+
   FUN_00401ef1(param_2,param_3,local_108);
   return local_108[(int)(uint)param_1];
 }
@@ -386,7 +386,7 @@ void FUN_00401ef1(undefined4 param_1,undefined8 param_2,long param_3)
   int local_14;
   int local_10;
   int local_c;
-  
+
   FUN_007cfbb0(local_118,0x100,"%s_pos_%d_v2",param_2,param_1);
   uVar1 = thunk_FUN_004010fe(local_118);
   FUN_00403b60(local_118,uVar1,local_138);
@@ -408,7 +408,7 @@ Function `FUN_00402061` is simply a lookup into a 256-byte table just built for 
 
 In `FUN_0040390b` earlier, there's initialization of three local pointers to three global data symbols. This becomes a strong assumption because at `&DAT_00a501d0`, when XOR'ing back the first byte `0xF8 ^ 0xAB`, the result is `0x53` which is character 'S', followed by `0xC8 ^ 0xAB = 'c'`, `0xC3 ^ 0xAB = 'h'`, `0xCE ^ 0xAB = 'e'`, immediately revealing the prefix "Sche…"; XOR'ing the entire sequence until 00 produces `SchematicsCTF2025`.
 
-![](/images/sch/flagle/Screenshot%202025-10-18%20235704.png)
+![](<./assets/flagle/Screenshot 2025-10-18 235704.png>)
 
 With this, we can obtain three plaintext resources: `SchematicsCTF2025` as the table basis, custom alphabet for decoder (resource 3), and hexadecimal payload that after parsing produces the target (resource 1). The rest is to build per-index substitution tables from `"{SchematicsCTF2025}_pos_{i}_v2"` using SHA-256 as Fisher–Yates seed, then for each position find input byte x such that `table_i[x] == target[i]`. From the information we obtain We write the solve script like this :
 

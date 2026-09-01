@@ -2,12 +2,14 @@
 import type { CollectionEntry } from "astro:content";
 import FormattedDate from "@/components/Date.astro";
 import Layout from "@/layouts/Layout.astro";
+import { getBlogImageSrc } from "@/utils/blog";
 
 type Props = CollectionEntry<"blog">["data"] & {
   headings: { depth: number; slug: string; text: string }[];
 };
 
 const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
+const heroImageSrc = getBlogImageSrc(heroImage);
 ---
 
 <Layout>
@@ -15,12 +17,12 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
     <!-- Hero Image -->
     <div class="w-full grid place-items-center my-10 px-4 md:px-10 overflow-x-hidden">
       {
-        heroImage && (
+        heroImageSrc && (
           <div class="w-full max-w-6xl bg-black rounded-2xl overflow-hidden shadow-2xl" style="aspect-ratio: 3349 / 1200;">
-            <img 
-              src={heroImage} 
-              alt="hero-image" 
-              class="w-full h-full object-contain object-center" 
+            <img
+              src={heroImageSrc}
+              alt="hero-image"
+              class="w-full h-full object-contain object-center"
             />
           </div>
         )
@@ -30,7 +32,7 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
     <!-- Main Content with TOC Sidebar -->
     <div class="max-w-7xl mx-auto px-4 md:px-8 relative">
       <div class="lg:flex lg:gap-8 lg:items-start">
-        
+
         <!-- Main Content Area -->
         <div class="lg:flex-1 min-w-0">
           <!-- Header -->
@@ -58,7 +60,7 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
         </div>
 
         <!-- Mobile TOC Button -->
-        <button 
+        <button
           id="mobile-toc-btn"
           class="lg:hidden fixed bottom-6 right-6 z-50 bg-black/80 backdrop-blur-sm border border-white/20 hover:border-white/40 text-white/80 hover:text-white p-3 rounded-lg shadow-xl transition-all duration-200 flex items-center justify-center"
           aria-label="Toggle Table of Contents"
@@ -69,20 +71,20 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
         </button>
 
         <!-- Mobile TOC Modal -->
-        <div 
+        <div
           id="mobile-toc-modal"
           class="lg:hidden fixed inset-0 z-40 hidden"
         >
           <!-- Overlay -->
           <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" id="mobile-toc-overlay"></div>
-          
+
           <!-- Modal Content -->
           <div class="absolute right-4 top-28 bottom-4 w-full max-w-xs bg-black/95 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl transform transition-transform duration-300 translate-x-full" id="mobile-toc-content">
             <div class="h-full flex flex-col">
               <!-- Header -->
               <div class="flex items-center justify-between px-6 py-4 border-b border-white/10">
                 <h3 class="text-white font-semibold text-base">Table of Contents</h3>
-                <button 
+                <button
                   id="mobile-toc-close"
                   class="text-white/60 hover:text-white transition-colors p-1 -mr-1"
                   aria-label="Close"
@@ -92,7 +94,7 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
                   </svg>
                 </button>
               </div>
-              
+
               <!-- TOC Content for Mobile -->
               <nav class="flex-1 overflow-y-auto px-6 py-5 scrollbar-thin">
                 <nav class="toc mobile-toc">
@@ -102,42 +104,42 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
                         heading: any;
                         children: TocNode[];
                       }
-                      
+
                       const buildNestedToc = (headings: any[]): TocNode[] => {
                         const stack: TocNode[] = [];
                         const root: TocNode[] = [];
-                        
+
                         headings.forEach(heading => {
                           const node: TocNode = { heading, children: [] };
-                          
+
                           while (stack.length > 0 && stack[stack.length - 1].heading.depth >= heading.depth) {
                             stack.pop();
                           }
-                          
+
                           if (stack.length === 0) {
                             root.push(node);
                           } else {
                             stack[stack.length - 1].children.push(node);
                           }
-                          
+
                           stack.push(node);
                         });
-                        
+
                         return root;
                       };
-                      
+
                       const tocTree = buildNestedToc(headings);
                       let itemCounter = 1000;
-                      
+
                       const renderNode = (node: TocNode, level = 0): any => {
                         const hasChildren = node.children.length > 0;
                         const itemId = `toc-item-mobile-${itemCounter++}`;
-                        
+
                         return (
                           <li class="mb-1">
                             <div class="flex items-start gap-1">
                               {hasChildren ? (
-                                <button 
+                                <button
                                   class="toc-collapse-btn mt-1.5 text-white/40 hover:text-white transition-colors flex-shrink-0"
                                   data-target={itemId}
                                 >
@@ -148,7 +150,7 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
                               ) : (
                                 <span class="w-4 flex-shrink-0"></span>
                               )}
-                              <a 
+                              <a
                                 href={`#${node.heading.slug}`}
                                 class={`mobile-toc-link hover:text-white transition-all duration-200 block py-1 flex-1 ${
                                   level === 0 ? 'text-white/60 text-sm' : 'text-white/50 text-xs'
@@ -158,7 +160,7 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
                                 {node.heading.text}
                               </a>
                             </div>
-                            
+
                             {hasChildren && (
                               <ul id={itemId} class="toc-section ml-5 space-y-1 mt-1 overflow-hidden transition-all duration-200">
                                 {node.children.map(child => renderNode(child, level + 1))}
@@ -167,7 +169,7 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
                           </li>
                         );
                       };
-                      
+
                       return tocTree.map(node => renderNode(node));
                     })()}
                   </ul>
@@ -182,7 +184,7 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
           <div id="toc-wrapper">
             <nav class="border border-white/10 rounded-lg bg-white/5 backdrop-blur-sm p-3 max-h-[calc(100vh-10rem)] overflow-y-auto scrollbar-thin">
               <h3 class="text-white font-semibold text-sm mb-3 uppercase tracking-wider">On this page</h3>
-              
+
               <!-- TOC Content with Nested Collapsible -->
               <nav class="toc">
                 <ul class="space-y-1 text-sm">
@@ -192,43 +194,43 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
                       heading: any;
                       children: TocNode[];
                     }
-                    
+
                     const buildNestedToc = (headings: any[]): TocNode[] => {
                       const stack: TocNode[] = [];
                       const root: TocNode[] = [];
-                      
+
                       headings.forEach(heading => {
                         const node: TocNode = { heading, children: [] };
-                        
+
                         // Find parent in stack
                         while (stack.length > 0 && stack[stack.length - 1].heading.depth >= heading.depth) {
                           stack.pop();
                         }
-                        
+
                         if (stack.length === 0) {
                           root.push(node);
                         } else {
                           stack[stack.length - 1].children.push(node);
                         }
-                        
+
                         stack.push(node);
                       });
-                      
+
                       return root;
                     };
-                    
+
                     const tocTree = buildNestedToc(headings);
                     let itemCounter = 0;
-                    
+
                     const renderNode = (node: TocNode, level = 0): any => {
                       const hasChildren = node.children.length > 0;
                       const itemId = `toc-item-${itemCounter++}`;
-                      
+
                       return (
                         <li class="mb-1">
                           <div class="flex items-start gap-1">
                             {hasChildren ? (
-                              <button 
+                              <button
                                 class="toc-collapse-btn mt-1.5 text-white/40 hover:text-white transition-colors flex-shrink-0"
                                 data-target={itemId}
                               >
@@ -239,7 +241,7 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
                             ) : (
                               <span class="w-4 flex-shrink-0"></span>
                             )}
-                            <a 
+                            <a
                               href={`#${node.heading.slug}`}
                               class={`hover:text-white transition-all duration-200 block py-1 flex-1 ${
                                 level === 0 ? 'text-white/60 text-sm' : 'text-white/50 text-xs'
@@ -249,7 +251,7 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
                               {node.heading.text}
                             </a>
                           </div>
-                          
+
                           {hasChildren && (
                             <ul id={itemId} class="toc-section ml-5 space-y-1 mt-1 overflow-hidden transition-all duration-200">
                               {node.children.map(child => renderNode(child, level + 1))}
@@ -258,7 +260,7 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
                         </li>
                       );
                     };
-                    
+
                     return tocTree.map(node => renderNode(node));
                   })()}
                 </ul>
@@ -278,7 +280,7 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
     scroll-behavior: smooth;
     scroll-padding-top: 100px;
   }
-  
+
   #toc-wrapper {
     transition: none;
     z-index: 100;
@@ -288,7 +290,7 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
   .toc a.active {
     @apply text-white font-semibold;
   }
-  
+
   .toc a.active span {
     @apply text-white;
   }
@@ -347,20 +349,20 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
   .scrollbar-thin::-webkit-scrollbar {
     width: 4px;
   }
-  
+
   .scrollbar-thin::-webkit-scrollbar-track {
     background: transparent;
   }
-  
+
   .scrollbar-thin::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.2);
     border-radius: 2px;
   }
-  
+
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.3);
   }
-  
+
   /* TOC Section collapsed state */
   .toc-section.collapsed {
     max-height: 0 !important;
@@ -378,10 +380,10 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
 
   function updateTocPosition() {
     if (!tocWrapper || !tocContainer) return;
-    
+
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     const headerHeight = 96; // 6rem = 96px
-    
+
     if (scrollTop > initialTop - headerHeight) {
       tocWrapper.style.position = 'fixed';
       tocWrapper.style.top = headerHeight + 'px';
@@ -398,15 +400,15 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
   function initStickyToc() {
     tocWrapper = document.getElementById('toc-wrapper');
     if (!tocWrapper) return;
-    
+
     tocContainer = tocWrapper.parentElement;
     if (!tocContainer) return;
-    
+
     const rect = tocWrapper.getBoundingClientRect();
     initialTop = window.pageYOffset + rect.top;
     containerLeft = rect.left;
     containerWidth = rect.width;
-    
+
     window.addEventListener('scroll', updateTocPosition);
     window.addEventListener('resize', () => {
       const rect = tocWrapper!.getBoundingClientRect();
@@ -414,7 +416,7 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
       containerWidth = rect.width;
       updateTocPosition();
     });
-    
+
     updateTocPosition();
   }
 
@@ -425,17 +427,17 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
   // TOC Collapsible Sections
   function initCollapsibleToc() {
     const collapseButtons = document.querySelectorAll('.toc-collapse-btn');
-    
+
     collapseButtons.forEach(btn => {
       const targetId = btn.getAttribute('data-target');
       const section = document.getElementById(targetId!);
       const svg = btn.querySelector('svg');
-      
+
       if (section && svg) {
         btn.addEventListener('click', (e) => {
           e.preventDefault();
           const isCollapsed = section.classList.contains('collapsed');
-          
+
           if (isCollapsed) {
             section.classList.remove('collapsed');
             section.style.maxHeight = section.scrollHeight + 'px';
@@ -449,7 +451,7 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
       }
     });
   }
-  
+
   document.addEventListener('DOMContentLoaded', initCollapsibleToc);
   document.addEventListener('astro:page-load', initCollapsibleToc);
 
@@ -460,7 +462,7 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
         entries.forEach((entry) => {
           const id = entry.target.getAttribute('id');
           const tocLink = document.querySelector(`.toc a[href="#${id}"]`);
-          
+
           if (entry.isIntersecting && tocLink) {
             document.querySelectorAll('.toc a').forEach((link) => {
               link.classList.remove('active');
@@ -476,7 +478,7 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
       observer.observe(heading);
     });
   }
-  
+
   document.addEventListener('DOMContentLoaded', initTocActiveState);
   document.addEventListener('astro:page-load', initTocActiveState);
 
@@ -494,7 +496,7 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
     function openToc() {
       // Only work on mobile (screens smaller than 1024px)
       if (window.innerWidth >= 1024) return;
-      
+
       modal.classList.remove('hidden');
       // Trigger reflow
       modal.offsetHeight;
@@ -521,7 +523,7 @@ const { title, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
     btn.addEventListener('click', toggleToc);
     closeBtn.addEventListener('click', closeToc);
     overlay.addEventListener('click', closeToc);
-    
+
     // Close TOC when clicking a link
     tocLinks.forEach(link => {
       link.addEventListener('click', () => {
