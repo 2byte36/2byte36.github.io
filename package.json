@@ -5,10 +5,12 @@
   "description": "CTF Writeups Archive - Blue Team focused on Forensics & Reverse Engineering",
   "scripts": {
     "dev": "astro dev",
+    "prebuild": "npm run tidy:blog-assets",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "fmt": "prettier . -w"
+    "fmt": "prettier . -w",
+    "tidy:blog-assets": "node scripts/tidy-blog-assets.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.0.3",
