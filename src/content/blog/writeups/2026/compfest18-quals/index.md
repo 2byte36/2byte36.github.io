@@ -2,7 +2,7 @@
 title: "Compfest 18 Quals"
 description: "Write ups from the challenge that I solved alongside with collaboration of my team HiB - ANTECH ANTECH ASYNC in Qualifications of Compfest 18"
 pubDate: "2026-08-30"
-heroImage: "./assets/image.png"
+heroImage: "./assets/logo.svg"
 ---
 
 Complete write-ups of challenge that I solved in Compfest 18 Qualification held by University of Indonesia.
@@ -421,7 +421,7 @@ $ sha256sum /tmp/patch_b.bin /tmp/patch_a.bin
 
 Next is just rev shits from the shellcode, i just rely on the claude and gpt. But the probset suggest for using Detect It Easy (DIE) or VT then we can know that this shellcode is donut packer. We can unpacked it with [donut decryptor](https://github.com/volexity/donut-decryptor) and rev will be so much more easily.
 
-#### Rev the Shellcode
+##### Rev the Shellcode
 ```bash
 Question 1/4
 What smart contract address does the ransomware query to retrieve its victim-specific configuration?
