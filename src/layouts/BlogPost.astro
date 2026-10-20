@@ -3,6 +3,7 @@ import type { CollectionEntry } from "astro:content";
 import FormattedDate from "@/components/Date.astro";
 import Layout from "@/layouts/Layout.astro";
 import { getBlogImageSrc } from "@/utils/blog";
+import FramedHeroImage from "@/components/FramedHeroImage.astro";
 
 type Props = CollectionEntry<"blog">["data"] & {
   headings: { depth: number; slug: string; text: string }[];
@@ -18,13 +19,11 @@ const heroImageSrc = getBlogImageSrc(heroImage);
     <div class="w-full grid place-items-center my-10 px-4 md:px-10 overflow-x-hidden">
       {
         heroImageSrc && (
-          <div class="w-full max-w-6xl bg-black rounded-2xl overflow-hidden shadow-2xl" style="aspect-ratio: 3349 / 1200;">
-            <img
-              src={heroImageSrc}
-              alt="hero-image"
-              class="w-full h-full object-contain object-center"
-            />
-          </div>
+          <FramedHeroImage
+            src={heroImageSrc}
+            alt={`${title} hero image`}
+            class="w-full max-w-6xl rounded-2xl shadow-2xl"
+          />
         )
       }
     </div>

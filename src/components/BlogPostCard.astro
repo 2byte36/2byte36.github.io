@@ -1,5 +1,6 @@
 ---
 import { getBlogImageSrc, type BlogImage } from "@/utils/blog";
+import FramedHeroImage from "@/components/FramedHeroImage.astro";
 
 type Props = {
   title: string;
@@ -26,13 +27,13 @@ const heroImageSrc = getBlogImageSrc(heroImage);
 
   <a href={`/blog/${slug}`} class="block group">
     {heroImageSrc && (
-      <div class="w-full bg-black overflow-hidden" style="aspect-ratio: 3349 / 1200;">
-        <img
-          src={heroImageSrc}
-          alt={title}
-          class="w-full h-full object-contain object-center opacity-90 group-hover:opacity-100 transition-all duration-300"
-        />
-      </div>
+      <FramedHeroImage
+        src={heroImageSrc}
+        alt={title}
+        loading="lazy"
+        class="w-full"
+        imageClass="opacity-95 group-hover:opacity-100 group-hover:scale-[1.015] transition-all duration-300"
+      />
     )}
 
     <div class="p-6 tracking-wider">
