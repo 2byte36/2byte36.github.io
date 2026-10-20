@@ -44,34 +44,72 @@ I tested the website's input handling by injecting a Server-Side Template Inject
 Teknocom{L1st3n1ng_t0_Mus1c_1s_Fr33_Dud3_G0v_D03s_N0th1ng_4nym0r3}
 
 ## Forensic
+
 ### phake
+
 #### Description
-"Something valuable is hidden. Will you discover it?"
+
+Something valuable is hidden. Will you discover it?
 
 #### Solution
-![](./assets/phake/1.png)
-Analyzing the provided pcap file revealed HTTP packets. By inspecting the HTTP stream, I found the flag in packet 90.
-![](./assets/phake/2.png)
+
+![phake — investigation evidence](./assets/wu-03-image3.png)
+
+The protocol hierarchy showed HTTP traffic in the PCAP, so I started there.
+
+![phake — investigation evidence](./assets/wu-03-image44.png)
+
+After inspecting several HTTP streams, I found the real flag in stream 90.
 
 #### Flag
+
+```text
 Teknocom{y0u_4ctu4lly_f0und_1t_lol}
+```
 
 ### Vault
+
 #### Description
-Wielino has left his mark among thousands of sarcastic messages. Only the patient and observant will uncover his secret
+
+Wielino has left his mark among thousands of sarcastic messages. Only the patient and observant will uncover his secret.
+
 #### Solution
-![](./assets/vault/1.png)
-Using basic steganographic analysis tools (exif, strings, binwalk, etc.), I discovered a gzip file embedded in the image. Extracting the gzip file revealed a binary folder. By running `grep -R "Teknocom" bin`, I located the flag.
-![](./assets/vault/2.png)
+
+Extracting the ZIP archive produced a JPEG.
+
+![Vault — investigation evidence](./assets/wu-03-image39.png)
+
+ExifTool did not reveal anything useful, so I moved to Binwalk. It found a gzip archive embedded in the JPEG, which I extracted.
+
+![Vault — investigation evidence](./assets/wu-03-image32.png)
+
+![Vault — investigation evidence](./assets/wu-03-image30.png)
+
+The extracted archive contained a `bin` directory with many files. I searched it with `grep -R "Teknocom" bin` and found the flag in `bin/something/something.txt`.
 
 #### Flag
+
+```text
 Teknocom{b1nw4lk_3xtr4ct3d_1t_lol}
+```
 
 ### Traceee
+
 #### Description
-The mission to reconstruct fragmented evidence from digital chaos, meticulously building a clear and undeniable narrative of an incident that will stand up to the highest levels of scrutiny.
+
+Reconstruct fragmented evidence from digital chaos into a clear, defensible account of an incident.
+
 #### Solution
-The pcapng file contained only TCP packets. By analyzing the packets, I identified a sequence of packets containing PNG data. Using a custom Python script, I reconstructed the PNG image and retrieved the flag.
+
+The PCAPNG file contained only TCP traffic.
+
+![Traceee — investigation evidence](./assets/wu-03-image23.png)
+
+The second stream contained a PNG signature, while stream 24 contained the PNG ending.
+
+I carved the hexadecimal data from the TCP streams and identified this record structure: `USBI` (4 bytes), a 4-byte header such as `00 01 00 17`, a 4-byte big-endian data length, and that many bytes of PNG data. I used the following script to reconstruct the image.
+
+`solve.py`
 
 ```python
 import sys, struct
@@ -96,7 +134,6 @@ def parse_pcapng_packets(buf: bytes):
             break
         body = buf[i + 8: i + block_total_length - 4]
 
-
         if block_type == 0x0A0D0D0A:
             if len(body) >= 4:
                 bom = struct.unpack_from(endian + "I", body, 0)[0]
@@ -117,7 +154,6 @@ def parse_pcapng_packets(buf: bytes):
                 packets.append(pkt)
         i += block_total_length
     return packets
-
 
 def extract_tcp_payloads(frames):
     payloads = []
@@ -149,17 +185,14 @@ def extract_tcp_payloads(frames):
                 payloads.append(data[pl:])
     return payloads
 
-
 def main():
     pcap_path = "chall.pcapng"
     out_path = "reconstructed.png"
-
 
     with open(pcap_path, "rb") as f:
         buf = f.read()
     frames = parse_pcapng_packets(buf)
     tcp_payloads = extract_tcp_payloads(frames)
-
 
     start_idx, end_idx = 2, 24
     parts = []
@@ -170,23 +203,27 @@ def main():
         data_len = struct.unpack(">I", pl[8:12])[0]
         parts.append(pl[12:12+data_len])
 
-
     stream = b"".join(parts)
     if not stream.startswith(PNG_SIG):
         raise RuntimeError("Rebuilt stream does not start with PNG signature")
-
 
     with open(out_path, "wb") as f:
         f.write(stream)
     print(f"[+] Wrote {out_path} ({len(stream)} bytes)")
 
-
 if __name__ == "__main__":
     main()
 ```
 
+The script recovered a PNG containing the flag.
+
 #### Flag
+
+![Traceee — investigation evidence](./assets/wu-03-image14.png)
+
+```text
 Teknocom{rly_you_thought_this_was_easy}
+```
 
 ## Reverse
 ### Reversify
