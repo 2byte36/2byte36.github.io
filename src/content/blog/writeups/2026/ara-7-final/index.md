@@ -2,7 +2,7 @@
 title: "ARA 7.0 2026 Final"
 description: "Tracing a macOS compromise through email, shell history, unified logs, and encrypted files in Wilson Disaster."
 pubDate: "2026-02-28"
-heroImage: "./assets/hero.jpg"
+heroImage: "./assets/hero.png"
 ---
 
 These are my forensics write-ups from ARA 7.0 2026 Final. Each section follows the solving process recorded during the investigation.

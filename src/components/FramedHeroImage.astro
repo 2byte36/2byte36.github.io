@@ -5,6 +5,7 @@ type Props = {
   class?: string;
   imageClass?: string;
   loading?: "eager" | "lazy";
+  backgroundColor?: string;
 };
 
 const {
@@ -13,29 +14,21 @@ const {
   class: className = "",
   imageClass = "",
   loading = "eager",
+  backgroundColor = "#000000",
 } = Astro.props;
 ---
 
 <div
-  class:list={["relative isolate overflow-hidden bg-slate-100", className]}
-  style="aspect-ratio: 3349 / 1200;"
+  class:list={["relative overflow-hidden", className]}
+  style={`aspect-ratio: 3349 / 1200; background-color: ${backgroundColor};`}
 >
-  <img
-    src={src}
-    alt=""
-    aria-hidden="true"
-    loading={loading}
-    decoding="async"
-    class="absolute inset-0 h-full w-full scale-110 object-cover blur-2xl saturate-150 opacity-80"
-  />
-  <div class="absolute inset-0 bg-white/10"></div>
   <img
     src={src}
     alt={alt}
     loading={loading}
     decoding="async"
     class:list={[
-      "relative z-10 h-full w-full object-contain object-center drop-shadow-[0_8px_24px_rgba(0,0,0,0.22)]",
+      "h-full w-full object-contain object-center",
       imageClass,
     ]}
   />

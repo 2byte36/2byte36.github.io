@@ -3,6 +3,7 @@ title: "Teknocomp 2025"
 description: "Complete write-ups of challenges solved in Teknocomp 2025 CTF held by Teknokrat University."
 pubDate: "2025-09-08"
 heroImage: "./assets/banner12.png"
+heroColor: "#da3234"
 ---
 
 Complete write-ups of challenges solved in Teknocomp 2025 CTF held by Teknokrat University. I finished 2nd on the leaderboard, and here is my final score:

@@ -8,9 +8,10 @@ type Props = {
   excerpt: string;
   date: Date;
   heroImage?: BlogImage;
+  heroColor?: string;
 };
 
-const { title, slug, excerpt, date, heroImage } = Astro.props;
+const { title, slug, excerpt, date, heroImage, heroColor } = Astro.props;
 const heroImageSrc = getBlogImageSrc(heroImage);
 ---
 
@@ -32,6 +33,7 @@ const heroImageSrc = getBlogImageSrc(heroImage);
         alt={title}
         loading="lazy"
         class="w-full"
+        backgroundColor={heroColor}
         imageClass="opacity-95 group-hover:opacity-100 group-hover:scale-[1.015] transition-all duration-300"
       />
     )}

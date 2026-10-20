@@ -3,6 +3,7 @@ title: "Hack It Braw - Cyber Hero Battleground"
 description: "Forensics write-ups covering DNS exfiltration, ICMP file transfers, and blind SQL injection in audit logs."
 pubDate: "2025-08-18"
 heroImage: "./assets/logo.svg"
+heroColor: "#061728"
 ---
 
 These are my forensics write-ups from Hack It Braw — Cyber Hero Battleground. Each section follows the solving process recorded during the investigation.
