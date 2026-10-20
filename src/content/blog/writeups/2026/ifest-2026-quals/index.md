@@ -1,7 +1,8 @@
 ---
 title: "IFEST 2026 Quals — Forensics"
 description: "Unlocking a Linux partition and tracing a Signal-delivered infection through memory and network artifacts."
-pubDate: "2026-10-19"
+pubDate: "2026-09-12"
+heroImage: "./assets/hero.webp"
 ---
 
 These are my forensics write-ups from IFEST 2026 Quals. Each section follows the solving process recorded during the investigation.

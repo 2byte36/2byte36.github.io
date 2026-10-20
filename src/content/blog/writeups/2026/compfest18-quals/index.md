@@ -1,8 +1,8 @@
 ---
 title: "Compfest 18 Quals"
 description: "Write ups from the challenge that I solved alongside with collaboration of my team HiB - ANTECH ANTECH ASYNC in Qualifications of Compfest 18"
-pubDate: "2026-08-30"
-heroImage: "./assets/logo.svg"
+pubDate: "2026-08-29"
+heroImage: "./assets/hero.png"
 ---
 
 Complete write-ups of challenge that I solved in Compfest 18 Qualification held by University of Indonesia.

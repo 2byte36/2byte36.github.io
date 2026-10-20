@@ -1,7 +1,8 @@
 ---
 title: "TECHFEST 2026 Quals — Forensics"
 description: "Reconstructing a display image from network traffic and recovering ransomware keys from Windows memory."
-pubDate: "2026-10-19"
+pubDate: "2026-07-09"
+heroImage: "./assets/hero.png"
 ---
 
 These are my forensics write-ups from TECHFEST 2026 Quals. Each section follows the solving process recorded during the investigation.

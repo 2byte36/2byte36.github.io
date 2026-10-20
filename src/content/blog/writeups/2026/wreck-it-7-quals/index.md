@@ -1,7 +1,8 @@
 ---
 title: "Wreck-IT 7.0 Quals — Forensics"
 description: "Following Windows event logs, Linux timestamps, and injected shellcode to recover three flags."
-pubDate: "2026-10-19"
+pubDate: "2026-07-18"
+heroImage: "./assets/hero.svg"
 ---
 
 These are my forensics write-ups from Wreck-IT 7.0 Quals. Each section follows the solving process recorded during the investigation.
@@ -159,7 +160,7 @@ Applying that sequence recovered the flag.
 ### Flag
 
 ```text
-FindITCTF{h4v3_y0u_7r13d_c4rv1ng}
+WRECKIT7{it wrecked? again? lmao}
 ```
 
 ### AI Disclosure

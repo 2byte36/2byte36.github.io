@@ -1,7 +1,8 @@
 ---
 title: "IFEST 2026 Final — Forensics"
 description: "Recovering a ransomware-encrypted PDF in the Masquerade challenge."
-pubDate: "2026-10-19"
+pubDate: "2026-09-26"
+heroImage: "./assets/hero.webp"
 ---
 
 These are my forensics write-ups from IFEST 2026 Final. Each section follows the solving process recorded during the investigation.

@@ -1,7 +1,8 @@
 ---
 title: "ITFEST 2026 — Forensics"
 description: "Android ransomware, a LUKS-encrypted Linux partition, and a browser trail leading to leaked documents."
-pubDate: "2026-10-19"
+pubDate: "2026-08-08"
+heroImage: "./assets/hero.jpg"
 ---
 
 These are my forensics write-ups from ITFEST 2026. Each section follows the solving process recorded during the investigation.

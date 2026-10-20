@@ -1,8 +1,8 @@
 ---
 title: "Country-2-Country CTF 2026 Qualification"
 description: "Five forensics investigations covering web logs, React2Shell traffic, a Linux keylogger, ClickFix, and a compromised server."
-pubDate: "2026-02-19"
-heroImage: "./assets/logo.svg"
+pubDate: "2026-02-14"
+heroImage: "./assets/hero.jpg"
 ---
 
 These are my forensics write-ups from Country-2-Country CTF 2026 Qualification. Each section follows the solving process recorded during the investigation.

@@ -1,7 +1,8 @@
 ---
 title: "TECHFEST 2026 Final — Forensics"
 description: "Analyzing the VoltPN Android application and recovering the encrypted file from its storage dump."
-pubDate: "2026-10-19"
+pubDate: "2026-07-25"
+heroImage: "./assets/hero.png"
 ---
 
 These are my forensics write-ups from TECHFEST 2026 Final. Each section follows the solving process recorded during the investigation.

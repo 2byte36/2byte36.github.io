@@ -1,7 +1,8 @@
 ---
 title: "HackToday 2026 — Forensics"
 description: "Windows triage artifacts, WordPress traffic recovered from memory, and an ESP32 flash investigation."
-pubDate: "2026-10-19"
+pubDate: "2026-09-12"
+heroImage: "./assets/hero.webp"
 ---
 
 These are my forensics write-ups from HackToday 2026. Each section follows the solving process recorded during the investigation.

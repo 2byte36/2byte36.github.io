@@ -1,7 +1,8 @@
 ---
 title: "The ACE — Forensics"
 description: "Three investigations covering a compromised web server, Android file exfiltration, and document-macro ransomware."
-pubDate: "2026-10-19"
+pubDate: "2026-07-07"
+heroImage: "./assets/hero.svg"
 ---
 
 These are my forensics write-ups from The ACE. Each section follows the solving process recorded during the investigation.

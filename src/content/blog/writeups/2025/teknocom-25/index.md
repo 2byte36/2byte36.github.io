@@ -1,7 +1,7 @@
 ---
 title: "Teknocomp 2025"
 description: "Complete write-ups of challenges solved in Teknocomp 2025 CTF held by Teknokrat University."
-pubDate: "2025-09-09"
+pubDate: "2025-09-08"
 heroImage: "./assets/banner12.png"
 ---
 

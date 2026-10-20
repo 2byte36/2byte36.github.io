@@ -1,7 +1,8 @@
 ---
 title: "JOINTS 2026 Quals — Forensics"
 description: "Recovering Go ransomware from memory, decrypting documents, rebuilding SQLite WAL history, and decoding hidden audio data."
-pubDate: "2026-10-19"
+pubDate: "2026-09-29"
+heroImage: "./assets/hero.webp"
 ---
 
 These are my forensics write-ups from JOINTS 2026 Quals. Each section follows the solving process recorded during the investigation.

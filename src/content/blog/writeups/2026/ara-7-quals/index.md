@@ -1,7 +1,8 @@
 ---
 title: "ARA 7.0 2026 Quals — Forensics"
 description: "Recovering credentials, investigating ransomware, and extracting evidence from a LUKS-encrypted disk image."
-pubDate: "2026-10-19"
+pubDate: "2026-02-07"
+heroImage: "./assets/hero.jpg"
 ---
 
 These are my forensics write-ups from ARA 7.0 2026 Quals. Each section follows the solving process recorded during the investigation.

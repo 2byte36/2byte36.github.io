@@ -1,7 +1,8 @@
 ---
 title: "GCW 2026 Final — Forensics"
 description: "Recovering encoded PowerShell from memory and tracing a CLFS exploit in a Windows disk image."
-pubDate: "2026-10-19"
+pubDate: "2026-06-20"
+heroImage: "./assets/hero.png"
 ---
 
 These are my forensics write-ups from GCW 2026 Final. Each section follows the solving process recorded during the investigation.
