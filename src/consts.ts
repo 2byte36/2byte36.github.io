@@ -19,7 +19,7 @@ export const NAV_LINKS: Array<{ title: string; href?: string }> = [
     href: "//github.com/" + GITHUB_USERNAME,
   },
   {
-    title: "Certifications",
-    href: "/certifications",
+    title: "Achievements",
+    href: "/achievements",
   },
 ];
