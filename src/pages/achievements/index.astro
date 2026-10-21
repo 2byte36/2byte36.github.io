@@ -1,6 +1,36 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import { achievementTimeline } from "@/data/achievements";
+import { experiences } from "@/data/experience";
+
+const years = [
+  ...new Set([
+    ...achievementTimeline.map(({ year }) => year),
+    ...experiences.map(({ year }) => year),
+  ]),
+].sort((a, b) => b - a);
+const timeline = years.map((year) => ({
+  year,
+  entries: [
+    ...experiences
+      .filter((entry) => entry.year === year)
+      .map((entry) => ({
+        title: entry.title,
+        organizer: entry.organization,
+        recognition: entry.period,
+        category: entry.category,
+        description: entry.description,
+        writeup: undefined,
+        kind: "experience",
+      })),
+    ...(
+      achievementTimeline.find((group) => group.year === year)?.entries ?? []
+    ).map((entry) => ({
+      ...entry,
+      kind: "achievement",
+    })),
+  ],
+}));
 
 const achievements = achievementTimeline.flatMap(({ entries }) => entries);
 const podiums = achievements.filter(({ recognition }) =>
@@ -10,8 +40,8 @@ const disclosures = achievements.length - podiums;
 ---
 
 <Layout
-  title="Achievements | 2byte"
-  description="A timeline of my cybersecurity competition results, recognized vulnerability disclosures, and community service achievements."
+  title="Experience & Achievements | 2byte"
+  description="A timeline of my security engineering, teaching, community contributions, CTF challenge development, and cybersecurity achievements."
 >
   <section
     class="achievements mx-auto max-w-6xl px-4 py-10 md:px-8 md:py-14"
@@ -24,12 +54,18 @@ const disclosures = achievements.length - podiums;
       <p
         class="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-white/65 md:text-lg"
       >
-        Competition podiums, responsible disclosures, and milestones along my
-        cybersecurity journey.
+        Work experience, teaching, community contributions, and achievements
+        along my cybersecurity journey.
       </p>
       <dl
-        class="mx-auto mt-8 grid max-w-xl grid-cols-3 divide-x divide-white/20 border-y border-white/20 py-5"
+        class="mx-auto mt-8 grid max-w-2xl grid-cols-2 gap-y-6 border-y border-white/20 py-5 sm:grid-cols-4"
       >
+        <div class="px-2">
+          <dt class="text-xs text-white/60 sm:text-sm">Experience</dt>
+          <dd class="mt-2 text-3xl">
+            {String(experiences.length).padStart(2, "0")}
+          </dd>
+        </div>
         <div class="px-2">
           <dt class="text-xs text-white/60 sm:text-sm">Achievements</dt>
           <dd class="mt-2 text-3xl">
@@ -46,11 +82,11 @@ const disclosures = achievements.length - podiums;
         </div>
       </dl>
       <nav
-        aria-label="Jump to achievement year"
+        aria-label="Jump to timeline year"
         class="mt-7 flex flex-wrap justify-center gap-3 text-sm"
       >
         {
-          achievementTimeline.map(({ year }) => (
+          timeline.map(({ year }) => (
             <a
               href={`#year-${year}`}
               class="border border-white/30 px-4 py-2 transition-colors hover:bg-white hover:text-black"
@@ -64,7 +100,7 @@ const disclosures = achievements.length - podiums;
 
     <div class="mt-14 md:mt-20">
       {
-        achievementTimeline.map(({ year, entries }) => (
+        timeline.map(({ year, entries }) => (
           <section
             id={`year-${year}`}
             aria-labelledby={`heading-${year}`}
@@ -76,13 +112,19 @@ const disclosures = achievements.length - podiums;
               </h2>
               <p class="mt-2 text-xs uppercase tracking-widest text-white/50">
                 {String(entries.length).padStart(2, "0")}{" "}
-                {entries.length === 1 ? "achievement" : "achievements"}
+                {entries.length === 1 ? "entry" : "entries"}
               </p>
             </div>
-            <ol class="timeline" aria-label={`${year} achievements`}>
+            <ol
+              class="timeline"
+              aria-label={`${year} experience and achievements`}
+            >
               {entries.map((achievement) => (
                 <li class="timeline-entry">
-                  <article class="achievement-card overflow-hidden rounded-lg border border-white/35 bg-white/[0.02] transition-colors hover:border-white/80">
+                  <article
+                    data-kind={achievement.kind}
+                    class="achievement-card overflow-hidden rounded-lg border border-white/35 bg-white/[0.02] transition-colors hover:border-white/80"
+                  >
                     <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/20 px-4 py-3 sm:px-6">
                       <span aria-hidden="true" class="flex gap-1.5">
                         <span class="h-2 w-2 rounded-full bg-white" />
