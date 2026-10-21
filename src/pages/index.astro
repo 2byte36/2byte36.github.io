@@ -53,9 +53,9 @@ const posts = (await getCollection("blog")).sort(
   <Section title="About Me">
     <div class="w-full grid place-items-center">
       <div
-        class="max-w-4xl text-xl md:text-lg opacity-90 text-center justify-evenly"
+        class="max-w-4xl space-y-5 text-base leading-relaxed md:text-lg opacity-90 text-left"
       >
-        <p>{ABOUT_ME}</p>
+        {ABOUT_ME.split("\n\n").map((paragraph) => <p>{paragraph}</p>)}
       </div>
     </div>
   </Section>
