@@ -2,8 +2,8 @@
 title: "GCW 2.0 Quals — Forensics"
 description: "Reassembling PDF fragments, recovering an AES key from memory, and extracting LSB data from video."
 pubDate: "2026-06-06"
-heroImage: "./assets/gcw-2.0-ctf-official.jpg"
-heroColor: "#ffffff"
+heroImage: "./assets/gcw-2.0-official-logo.png"
+heroColor: "#000000"
 ---
 
 These are my forensics write-ups from GCW 2.0 Quals. Each section follows the solving process recorded during the investigation.
