@@ -9,7 +9,7 @@ type Props = CollectionEntry<"blog">["data"] & {
   headings: { depth: number; slug: string; text: string }[];
 };
 
-const { title, pubDate, updatedDate, heroImage, heroColor, headings = [] } = Astro.props;
+const { title, pubDate, updatedDate, heroImage, heroColor, heroLabel, headings = [] } = Astro.props;
 const heroImageSrc = getBlogImageSrc(heroImage);
 ---
 
@@ -24,6 +24,7 @@ const heroImageSrc = getBlogImageSrc(heroImage);
             alt={`${title} hero image`}
             class="w-full max-w-6xl rounded-2xl shadow-2xl"
             backgroundColor={heroColor}
+            label={heroLabel}
           />
         )
       }

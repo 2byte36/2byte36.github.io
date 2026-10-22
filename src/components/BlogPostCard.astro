@@ -9,9 +9,10 @@ type Props = {
   date: Date;
   heroImage?: BlogImage;
   heroColor?: string;
+  heroLabel?: string;
 };
 
-const { title, slug, excerpt, date, heroImage, heroColor } = Astro.props;
+const { title, slug, excerpt, date, heroImage, heroColor, heroLabel } = Astro.props;
 const heroImageSrc = getBlogImageSrc(heroImage);
 ---
 
@@ -34,6 +35,7 @@ const heroImageSrc = getBlogImageSrc(heroImage);
         loading="lazy"
         class="w-full"
         backgroundColor={heroColor}
+        label={heroLabel}
         imageClass="opacity-95 group-hover:opacity-100 group-hover:scale-[1.015] transition-all duration-300"
       />
     )}

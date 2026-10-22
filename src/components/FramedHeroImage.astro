@@ -6,6 +6,7 @@ type Props = {
   imageClass?: string;
   loading?: "eager" | "lazy";
   backgroundColor?: string;
+  label?: string;
 };
 
 const {
@@ -15,6 +16,7 @@ const {
   imageClass = "",
   loading = "eager",
   backgroundColor = "#000000",
+  label,
 } = Astro.props;
 ---
 
@@ -32,4 +34,11 @@ const {
       imageClass,
     ]}
   />
+  {
+    label && (
+      <span class="absolute bottom-3 right-3 border border-white/40 bg-black/90 px-3 py-1.5 text-xs tracking-widest text-white shadow-lg sm:bottom-4 sm:right-4 sm:text-sm">
+        {label}
+      </span>
+    )
+  }
 </div>
