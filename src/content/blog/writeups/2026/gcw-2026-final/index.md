@@ -2,8 +2,8 @@
 title: "GCW 2.0 Final — Forensics"
 description: "Recovering encoded PowerShell from memory and tracing a CLFS exploit in a Windows disk image."
 pubDate: "2026-06-20"
-heroImage: "./assets/hero.svg"
-heroLabel: "GCW 2.0"
+heroImage: "./assets/gcw-2.0-final-official.jpg"
+heroColor: "#ffffff"
 ---
 
 These are my forensics write-ups from GCW 2.0 Final. Each section follows the solving process recorded during the investigation.

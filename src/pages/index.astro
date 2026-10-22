@@ -28,7 +28,6 @@ const posts = (await getCollection("blog")).sort(
             date={post.data.pubDate}
             heroImage={post.data.heroImage}
             heroColor={post.data.heroColor}
-            heroLabel={post.data.heroLabel}
           />
         ))
       }
