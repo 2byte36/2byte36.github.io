@@ -32,17 +32,43 @@ Flag: `SCH26{m4k35ure_u4lw4ys_up2d4t3d5ri}`
 
 Points: 394
 
-This challenge contained two related cases. I started with the PST files and opened them in GoldFynch's PST Viewer. The case-a mailbox contained a phishing email with an attached PDF. Inspecting the PDF structure revealed the share ID `d-8fk2qmvx`.
+This challenge contained two related cases and a twelve-question verification sequence.
+
+### Question #1
+
+> What is the share ID of the malicious AI-generated presentation that was used to host the phishing chain?
+>
+> Format: share ID
+
+I started with the PST files and opened them in GoldFynch's PST Viewer. The case-a mailbox contained a phishing email with an attached PDF. Inspecting the PDF structure revealed the share ID `d-8fk2qmvx`.
 
 ![Share ID recovered from the phishing attachment](./assets/schematics-image-12.png)
+
+### Question #2
+
+> After the stolen session cookie was replayed, from which IP address did the attacker access the mailbox?
+>
+> Format: IPv4 address
 
 The Entra sign-in records identified `45.148.10.77` as the suspicious source address.
 
 ![Suspicious address in the Entra sign-in records](./assets/schematics-image-43.png)
 
+### Question #3
+
+> From which website did the victim download the malicious software?
+>
+> Format: website domain
+
 In case-b, the malicious email directed the victim to `software.аnwei.cn`.
 
 ![Malicious domain in the second mailbox](./assets/schematics-image-16.png)
+
+### Question #4
+
+> From which cloud storage bucket did the malware download its payload files?
+>
+> Format: bucket hostname
 
 I continued with `sysmon.xml` and searched the events in Visual Studio Code. The setup process accessed a cloud-storage URL under the bucket:
 
@@ -54,6 +80,12 @@ The activity involved `C:\Users\elshe\AppData\Local\Temp\RatSetup\Setup.exe`.
 
 ![Cloud bucket and setup activity](./assets/schematics-image-32.png)
 
+### Question #5
+
+> Which ZIP archive did the victim download, and into which directory did the dropper stage its payloads?
+>
+> Format: ZIP filename, directory path
+
 Searching for the downloaded `Setup.zip` and related drop events revealed the staging directory:
 
 ```text
@@ -61,6 +93,12 @@ C:\Program Files (x86)\Common Files\System
 ```
 
 ![Registry event exposing the staging directory](./assets/schematics-image-42.png)
+
+### Question #6
+
+> Which DLL did the signed loader sideload from its own directory, and which downloaded payload was it a renamed copy of?
+>
+> Format: loaded DLL, downloaded payload
 
 The signed executable `douyin.exe` loaded the attacker's DLLs. Correlating its image-load events with the RAT's parent process identified `dbghelp.dll` and `engcore.dll`.
 
@@ -70,11 +108,23 @@ The signed executable `douyin.exe` loaded the attacker's DLLs. Correlating its i
 
 ![Accepted malicious DLL pair](./assets/schematics-image-14.png)
 
+### Question #7
+
+> Into which system process did `winsync.dll` inject its monitoring code, and which Run-key value name did it create for persistence?
+>
+> Format: process name, Run-key value name
+
 Searching for `winsync.dll` showed that it was loaded by `svchost.exe`. The associated Run-key persistence entry was named `SysHealthMonitor`.
 
 ![winsync.dll loaded by svchost.exe](./assets/schematics-image-10.png)
 
 ![SysHealthMonitor persistence entry](./assets/schematics-image-34.png)
+
+### Question #8
+
+> Which process was hosting the RAT when memory was acquired, and which process was its parent?
+>
+> Format: process name, parent process name
 
 The memory image's modification time was 1 October 2026 at 03:54:49. Correlating that time with Sysmon revealed `nslookup.exe` and its parent, `douyin.exe`.
 
@@ -82,9 +132,29 @@ The memory image's modification time was 1 October 2026 at 03:54:49. Correlating
 
 ![Parent-process relationship in Sysmon](./assets/schematics-image-20.png)
 
-The file created through the `nslookup.exe` activity was `SrvRestart64.exe`. Network events showed the C2 endpoint `203.0.113.24:8443`.
+### Question #9
+
+> What is the filename of the second-stage persistence binary created by the RAT-hosting process?
+>
+> Format: filename
+
+The file created through the `nslookup.exe` activity was `SrvRestart64.exe`.
+
+### Question #10
+
+> What C2 endpoint does the implant contact? Carve it from the implant configuration in memory and confirm it against the traffic capture.
+>
+> Format: IP address and port
+
+Network events showed the C2 endpoint `203.0.113.24:8443`.
 
 ![C2 connection and related process activity](./assets/schematics-image-4.png)
+
+### Question #11
+
+> What group ID is pinned in the implant configuration—the `BEIZHU` remark value—and what password string does its keylog buffer hold?
+>
+> Format: group ID, password
 
 Searching strings from the memory image for `BEIZHU` recovered the host identifier `finance-sz-04`.
 
@@ -93,6 +163,12 @@ Searching strings from the memory image for `BEIZHU` recovered the host identifi
 The nearby C2 and keylogging data contained the account `elsche@anwei.cn` and the value `qg71-4Lw-dKM8@J>`.
 
 ![Account data and adjacent value](./assets/schematics-image-35.png)
+
+### Question #12
+
+> Before detection, the intruder used the implant to submit a payment from the victim's own ERP console. What beneficiary account number did the funds go to, and in what amount?
+>
+> Format: account number, amount
 
 The same memory search exposed the targeted account and amount:
 
